@@ -1,0 +1,67 @@
+name: Publish release dashboard
+
+on:
+  schedule:
+    # Daily at 13:17 UTC, about 6am US Pacific, so the data is fresh at the start of the workday.
+    # The offset avoids the top-of-hour queue that delays scheduled runs on GitHub.
+    - cron: '17 13 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'scripts/**'
+      - '.github/workflows/publish-dashboard.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two publishes race. A queued run waits rather than cancelling, so a sweep
+# that is already collecting data is allowed to finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Report API budget before the sweep
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api rate_limit --jq '.resources.core | "core limit=\(.limit) remaining=\(.remaining)"'
+
+      - name: Collect release status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pwsh -File scripts/Get-AvmReleaseStatus.ps1 -OutputPath site/data/release-status.json
+
+      - name: Report API budget after the sweep
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api rate_limit --jq '.resources.core | "core limit=\(.limit) remaining=\(.remaining)"'
+
+      - name: Stage the site
+        run: |
+          cp -r site _site
+          rm -f _site/serve.js
+
+      # enablement turns Pages on through the API using GITHUB_TOKEN, so a repository
+      # admin does not have to flip the setting by hand first.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
