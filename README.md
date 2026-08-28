@@ -21,6 +21,12 @@ A module can be fixed on `main` and still be unavailable to anyone using the Ter
 
 `.github/workflows/publish-dashboard.yml` runs daily at 13:17 UTC, on manual dispatch, and on any push that touches `site/` or `scripts/`. It runs the collector, stages `site/` as `_site/`, and deploys straight to GitHub Pages. The generated JSON is never committed back.
 
+Pages must be enabled once before the first run, because `GITHUB_TOKEN` is not allowed to create a Pages site. A repository admin runs this:
+
+```pwsh
+gh api -X POST repos/OWNER/REPO/pages -f build_type=workflow
+```
+
 The copy of `site/data/release-status.json` in this repository is a fixture for local development only. It goes stale, and the published site never uses it.
 
 ## Running it locally

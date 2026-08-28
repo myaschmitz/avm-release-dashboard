@@ -53,11 +53,10 @@ jobs:
           cp -r site _site
           rm -f _site/serve.js
 
-      # enablement turns Pages on through the API using GITHUB_TOKEN, so a repository
-      # admin does not have to flip the setting by hand first.
+      # Pages must already be enabled with build type "workflow". GITHUB_TOKEN cannot
+      # create the site itself, so a repository admin runs this once:
+      #   gh api -X POST repos/OWNER/REPO/pages -f build_type=workflow
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
