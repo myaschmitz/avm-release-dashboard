@@ -23,7 +23,16 @@ const CARD_KEYS = ['unreleased-work', 'aged', 'never-released', 'nothing-to-rele
 const AGED_DAYS = 90;
 const THEME_LABEL = { system: 'System', light: 'Light', dark: 'Dark' };
 
+// Which series the trend chart draws, in legend order.
+const SERIES = [
+  { key: 'unreleasedWork', label: 'Unreleased work', color: 'var(--amber)' },
+  { key: 'aged', label: 'Over ' + AGED_DAYS + ' days', color: 'var(--red)' },
+  { key: 'awaitingIssues', label: 'Awaiting release', color: 'var(--accent)' }
+];
+
 let MODULES = [];
+let HISTORY = [];
+const EXPANDED = new Set();
 let sortKey = 'state';
 let sortAsc = true;
 
@@ -108,6 +117,101 @@ function wireTheme() {
   });
 }
 
+/* trend chart ------------------------------------------------------------ */
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function svg(tag, attrs) {
+  const node = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => node.setAttribute(k, String(v)));
+  return node;
+}
+
+// A viewBox lets the chart scale with the panel without recomputing on resize.
+const CHART = { w: 900, h: 220, left: 40, right: 16, top: 16, bottom: 28 };
+
+function renderTrend() {
+  const panel = document.getElementById('trendPanel');
+  const host = document.getElementById('trend');
+  host.textContent = '';
+
+  if (HISTORY.length === 0) {
+    panel.hidden = true;
+    return;
+  }
+  panel.hidden = false;
+
+  const note = document.getElementById('trendNote');
+  if (HISTORY.length === 1) {
+    note.textContent = 'One day recorded so far. The shape appears once a few more runs land.';
+  } else {
+    note.textContent = HISTORY.length + ' days recorded, ' + HISTORY[0].date + ' to ' + HISTORY[HISTORY.length - 1].date + '.';
+  }
+
+  const plotW = CHART.w - CHART.left - CHART.right;
+  const plotH = CHART.h - CHART.top - CHART.bottom;
+
+  const values = HISTORY.flatMap(row => SERIES.map(s => row[s.key] || 0));
+  // Round the ceiling up to a multiple of five so the gridline labels stay whole.
+  const peak = Math.max(5, Math.ceil(Math.max(...values) / 5) * 5);
+
+  const x = i => CHART.left + (HISTORY.length === 1 ? plotW / 2 : (i / (HISTORY.length - 1)) * plotW);
+  const y = v => CHART.top + plotH - (v / peak) * plotH;
+
+  const chart = svg('svg', {
+    viewBox: `0 0 ${CHART.w} ${CHART.h}`,
+    class: 'chart',
+    role: 'img',
+    'aria-label': 'Counts over time'
+  });
+
+  [0, 0.5, 1].forEach(fraction => {
+    const value = Math.round(peak * fraction);
+    const yy = y(value);
+    chart.appendChild(svg('line', { x1: CHART.left, y1: yy, x2: CHART.w - CHART.right, y2: yy, class: 'grid' }));
+    const label = svg('text', { x: CHART.left - 8, y: yy + 4, class: 'axis', 'text-anchor': 'end' });
+    label.textContent = String(value);
+    chart.appendChild(label);
+  });
+
+  SERIES.forEach(series => {
+    const points = HISTORY.map((row, i) => `${x(i)},${y(row[series.key] || 0)}`).join(' ');
+    if (HISTORY.length > 1) {
+      chart.appendChild(svg('polyline', { points, class: 'line', stroke: series.color }));
+    }
+    HISTORY.forEach((row, i) => {
+      const dot = svg('circle', { cx: x(i), cy: y(row[series.key] || 0), r: 3, class: 'dot', fill: series.color });
+      const tip = svg('title');
+      tip.textContent = `${row.date} — ${series.label}: ${row[series.key] || 0}`;
+      dot.appendChild(tip);
+      chart.appendChild(dot);
+    });
+  });
+
+  const first = svg('text', { x: CHART.left, y: CHART.h - 8, class: 'axis' });
+  first.textContent = HISTORY[0].date;
+  chart.appendChild(first);
+
+  if (HISTORY.length > 1) {
+    const last = svg('text', { x: CHART.w - CHART.right, y: CHART.h - 8, class: 'axis', 'text-anchor': 'end' });
+    last.textContent = HISTORY[HISTORY.length - 1].date;
+    chart.appendChild(last);
+  }
+
+  host.appendChild(chart);
+
+  const legend = document.getElementById('trendLegend');
+  legend.textContent = '';
+  SERIES.forEach(series => {
+    const item = el('span', 'legend-item');
+    const swatch = el('span', 'swatch');
+    swatch.style.background = series.color;
+    item.appendChild(swatch);
+    item.appendChild(el('span', null, series.label));
+    legend.appendChild(item);
+  });
+}
+
 /* rendering -------------------------------------------------------------- */
 
 function renderCards() {
@@ -168,6 +272,66 @@ function matchesFilter(m, filter) {
   return m.state === filter;
 }
 
+function linkItem(number, title, url, meta) {
+  const li = el('li');
+  const link = el('a', 'ref', '#' + number);
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  li.appendChild(link);
+  li.appendChild(el('span', 'ref-title', title));
+  if (meta) li.appendChild(el('span', 'ref-meta', meta));
+  return li;
+}
+
+function detailBlock(heading, items) {
+  const block = el('div', 'detail-block');
+  block.appendChild(el('h3', null, heading));
+  const list = el('ul');
+  items.forEach(node => list.appendChild(node));
+  block.appendChild(list);
+  return block;
+}
+
+function detailRow(m, prs, issues) {
+  const row = el('tr', 'detail');
+  const holder = el('td');
+  holder.colSpan = 7;
+
+  const box = el('div', 'detail-box');
+
+  if (prs.length) {
+    box.appendChild(detailBlock(
+      prs.length + (prs.length === 1 ? ' pull request merged since ' : ' pull requests merged since ') + m.latestTag,
+      prs.map(pr => linkItem(pr.number, pr.title, pr.url, pr.author ? '@' + pr.author : ''))
+    ));
+  }
+
+  if (issues.length) {
+    box.appendChild(detailBlock(
+      issues.length + (issues.length === 1 ? ' issue awaiting a release' : ' issues awaiting a release'),
+      issues.map(issue => linkItem(issue.number, issue.title, issue.url, ''))
+    ));
+  }
+
+  if (prs.length) {
+    // No tag is prefilled. Commit subjects do not reliably say whether a change is
+    // breaking, so the version stays a human decision under SNFR17.
+    const actions = el('div', 'detail-actions');
+    const draft = el('a', 'button', 'Draft a release');
+    draft.href = m.url + '/releases/new';
+    draft.target = '_blank';
+    draft.rel = 'noopener';
+    actions.appendChild(draft);
+    actions.appendChild(el('span', 'fine', 'Opens GitHub with the tag blank. Generate release notes there.'));
+    box.appendChild(actions);
+  }
+
+  holder.appendChild(box);
+  row.appendChild(holder);
+  return row;
+}
+
 function render() {
   const term = document.getElementById('search').value.trim().toLowerCase();
   const state = document.getElementById('stateFilter').value;
@@ -206,7 +370,34 @@ function render() {
 
     tr.appendChild(cell('Managed files', m.pinnedVersion ? null : 'dim', m.pinnedVersion || 'none'));
 
+    const prs = m.unreleasedPrs || [];
+    const issues = m.awaitingReleaseIssues || [];
+    const hasDetail = prs.length > 0 || issues.length > 0;
+
+    if (hasDetail) {
+      tr.classList.add('expandable');
+      tr.tabIndex = 0;
+      tr.setAttribute('role', 'button');
+      tr.setAttribute('aria-expanded', String(EXPANDED.has(m.repo)));
+      nameCell.insertBefore(el('span', 'caret', '▸'), nameCell.firstChild);
+
+      const toggle = () => {
+        if (EXPANDED.has(m.repo)) { EXPANDED.delete(m.repo); } else { EXPANDED.add(m.repo); }
+        render();
+      };
+      // The module name is a link out to GitHub, so clicking it must not also expand.
+      tr.addEventListener('click', e => { if (!e.target.closest('a')) toggle(); });
+      tr.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    }
+
     body.appendChild(tr);
+
+    if (hasDetail && EXPANDED.has(m.repo)) {
+      tr.classList.add('is-open');
+      body.appendChild(detailRow(m, prs, issues));
+    }
   });
 
   document.getElementById('empty').hidden = shown.length > 0;
@@ -236,13 +427,19 @@ function wire() {
 
 wireTheme();
 
-fetch('data/release-status.json')
-  .then(r => r.json())
-  .then(doc => {
+// History is optional. A repository publishing for the first time has no rows yet,
+// and the page must still render everything else.
+Promise.all([
+  fetch('data/release-status.json').then(r => r.json()),
+  fetch('data/history.json').then(r => (r.ok ? r.json() : [])).catch(() => [])
+])
+  .then(([doc, history]) => {
     MODULES = doc.modules || [];
+    HISTORY = Array.isArray(history) ? history : [];
     document.getElementById('stamp').textContent = doc.generatedAt || 'unknown';
     document.getElementById('count').textContent = doc.repoCount ?? MODULES.length;
     renderCards();
+    renderTrend();
     wire();
     render();
   })

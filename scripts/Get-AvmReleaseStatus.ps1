@@ -24,8 +24,13 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 function Invoke-GhJson {
-    param([string]$Path, [string]$Jq)
-    $arguments = @('api', $Path)
+    param([string]$Path, [string]$Jq, [string]$Method, [hashtable]$Fields)
+    $arguments = @('api')
+    if ($Method) { $arguments += @('-X', $Method) }
+    $arguments += $Path
+    # Query strings long enough to need encoding go through -f rather than the path,
+    # which is what the search endpoints require.
+    if ($Fields) { foreach ($key in $Fields.Keys) { $arguments += @('-f', "$key=$($Fields[$key])") } }
     if ($Jq) { $arguments += @('--jq', $Jq) }
     $raw = & gh @arguments 2>$null
     if ($LASTEXITCODE -ne 0 -or -not $raw) { return $null }
@@ -96,9 +101,41 @@ function Get-NewestVersion {
     return [pscustomobject]@{ Tag = $newest.Name; Published = $published }
 }
 
+function Get-AwaitingReleaseIssue {
+    <#
+        AVM defines "Status: Awaiting Release To Be Cut :scissors:" to mean a fix has
+        merged but no release carries it yet. That is the same condition this script
+        computes from tags, so the issues belong beside the commit counts.
+
+        One org-wide search returns every match with its repository, which costs a
+        single call rather than one per repository.
+    #>
+    param([string]$Owner)
+
+    $query = "org:$Owner is:issue is:open label:`"Status: Awaiting Release To Be Cut :scissors:`""
+    $found = Invoke-GhJson -Path 'search/issues' -Method 'GET' -Fields @{ q = $query; per_page = '100' }
+
+    $byRepo = @{}
+    if ($null -eq $found -or -not ($found.PSObject.Properties.Name -contains 'items')) { return $byRepo }
+
+    foreach ($item in @($found.items)) {
+        $repoName = ($item.repository_url -split '/')[-1]
+        if (-not $byRepo.ContainsKey($repoName)) { $byRepo[$repoName] = [System.Collections.Generic.List[object]]::new() }
+        $byRepo[$repoName].Add([pscustomobject]@{
+                number = $item.number
+                title  = $item.title
+                url    = $item.html_url
+            })
+    }
+    return $byRepo
+}
+
 $repoNames = @(Get-AvmRepoName -Owner $Owner -Pattern $RepoPattern)
 if ($MaxRepos -gt 0) { $repoNames = @($repoNames | Select-Object -First $MaxRepos) }
 Write-Host "Found $($repoNames.Count) repositories"
+
+$awaitingByRepo = Get-AwaitingReleaseIssue -Owner $Owner
+Write-Host "Found awaiting-release issues in $($awaitingByRepo.Keys.Count) repositories"
 
 $records = [System.Collections.Generic.List[object]]::new()
 $index = 0
@@ -112,17 +149,19 @@ foreach ($name in $repoNames) {
     $defaultBranch = if ($meta) { $meta.default_branch } else { 'main' }
 
     $record = [ordered]@{
-        module          = $name -replace '^terraform-azurerm-', ''
-        repo            = $name
-        url             = if ($meta) { $meta.html_url } else { "https://github.com/$repo" }
-        pinnedVersion   = Get-PinnedVersion -Repo $repo
-        latestTag       = $null
-        latestPublished = $null
-        aheadBy         = 0
-        automationAhead = 0
-        humanAhead      = 0
-        oldestHumanDays = $null
-        state           = 'unknown'
+        module                 = $name -replace '^terraform-azurerm-', ''
+        repo                   = $name
+        url                    = if ($meta) { $meta.html_url } else { "https://github.com/$repo" }
+        pinnedVersion          = Get-PinnedVersion -Repo $repo
+        latestTag              = $null
+        latestPublished        = $null
+        aheadBy                = 0
+        automationAhead        = 0
+        humanAhead             = 0
+        oldestHumanDays        = $null
+        unreleasedPrs          = @()
+        awaitingReleaseIssues  = @(if ($awaitingByRepo.ContainsKey($name)) { $awaitingByRepo[$name] } else { })
+        state                  = 'unknown'
     }
 
     $release = Get-NewestVersion -Repo $repo
@@ -162,6 +201,27 @@ foreach ($name in $repoNames) {
     if ($humanCommits.Count -gt 0) {
         $oldest = ($humanCommits | ForEach-Object { [datetime]$_.commit.committer.date } | Sort-Object | Select-Object -First 1)
         $record.oldestHumanDays = [int][math]::Round(((Get-Date).ToUniversalTime() - $oldest).TotalDays, 0)
+
+        # Squash merges rewrite commit SHAs, so a merge_commit_sha recorded on the pull
+        # request often is not the commit that reached the default branch. The trailing
+        # "(#123)" that squashing writes into the subject survives, so the subject is the
+        # reliable link back to the pull request.
+        $seen = [System.Collections.Generic.HashSet[int]]::new()
+        $pullRequests = [System.Collections.Generic.List[object]]::new()
+        foreach ($commit in $humanCommits) {
+            $subject = ($commit.commit.message -split "`n")[0]
+            if ($subject -notmatch '\(#(\d+)\)\s*$') { continue }
+            $number = [int]$Matches[1]
+            if (-not $seen.Add($number)) { continue }
+            $pullRequests.Add([pscustomobject]@{
+                    number = $number
+                    title  = ($subject -replace '\s*\(#\d+\)\s*$', '')
+                    author = $commit.author.login
+                    url    = "https://github.com/$repo/pull/$number"
+                    date   = $commit.commit.committer.date
+                })
+        }
+        $record.unreleasedPrs = @($pullRequests | Sort-Object number)
     }
 
     $record.state = if ($record.humanAhead -gt 0) { 'unreleased-work' }

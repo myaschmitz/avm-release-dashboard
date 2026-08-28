@@ -8,6 +8,14 @@ For every `Azure/terraform-azurerm-avm-*` repository it reports the newest versi
 
 A module can be fixed on `main` and still be unavailable to anyone using the Terraform registry, because the registry publishes from git tags. This page shows which repositories are in that state, and how long they have been there.
 
+## What it shows
+
+Four summary cards, a trend chart, and a table of every module.
+
+Rows for modules with unreleased pull requests or issues awaiting a release expand when clicked, listing each one with a link to GitHub. Pull requests are identified by the `(#123)` suffix that a squash merge writes into the commit subject, because squashing rewrites commit SHAs and a pull request's recorded merge commit often is not the one that reached the default branch.
+
+The chart reads `site/data/history.json`, one row per day.
+
 ## States
 
 | State | Meaning |
@@ -29,10 +37,13 @@ gh api -X POST repos/OWNER/REPO/pages -f build_type=workflow
 
 The copy of `site/data/release-status.json` in this repository is a fixture for local development only. It goes stale, and the published site never uses it.
 
+`site/data/history.json` is different. It holds one row per day, and the GitHub API cannot reproduce a past day, so the workflow commits it back after every run. That commit is made with `GITHUB_TOKEN`, which does not start new workflow runs, and the `push` trigger lists only hand-edited paths, so there is no loop.
+
 ## Running it locally
 
 ```pwsh
 pwsh -File scripts/Get-AvmReleaseStatus.ps1 -OutputPath site/data/release-status.json
+pwsh -File scripts/Update-AvmReleaseHistory.ps1
 node site/serve.js
 ```
 
