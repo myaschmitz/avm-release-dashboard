@@ -309,13 +309,13 @@ function renderCards() {
     {
       n: prs,
       label: 'merged pull requests, still unreleased',
-      note: 'across those modules, none served by the Terraform registry',
+      note: 'no published version includes them yet',
       tone: ''
     },
     {
       n: middle === null ? '—' : middle,
       label: 'days the typical module has waited',
-      note: 'median, counted from each one\u2019s oldest unreleased commit',
+      note: 'half have waited longer than this',
       tone: middle > AGED_DAYS ? 'alert' : ''
     }
   ];
