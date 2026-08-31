@@ -147,15 +147,11 @@
       <li><b>Fully released</b> — the newest version tag sits on the tip of the default branch. Nothing at all is ahead, not even a bot commit.</li>
       <li><b>No version tag</b> — the repository has no semver tag, so the Terraform registry has nothing to publish. Most of these are proposed modules that were never developed.</li>
       <li><b>Managed files</b> — the version of <code>azure-verified-modules-managed-files</code> the repository is pinned to. A lagging pin usually means an open pull request is holding the upgrade back.</li>
-      <li><b>Rows that expand</b> — a module with unreleased pull requests or issues awaiting a release opens to list them, each linking to GitHub. Pull requests are matched by the <code>(#123)</code> that a squash merge writes into the commit subject.</li>
-      <li><b>Draft a release</b> — opens GitHub's new-release page for that module with the tag left blank. AVM's SNFR17 requires a minor bump for a breaking change or a feature and a patch bump for a backward-compatible fix, and commit subjects do not say which reliably enough to choose for you.</li>
-      <li><b>The chart</b> — one line counts repositories and one counts issues, so each label names its unit. The repository count comes from git. The issue count comes from a label somebody applied by hand, which is why it sits far lower.</li>
-      <li><b>Other modules</b> — collapsed at the bottom. They are either ahead by nothing but bot commits, or carry no version tag at all. Neither is waiting on anybody, so neither belongs in the main table.</li>
     </ul>
     <p class="fine">Versions come from git tags rather than GitHub releases, because the Terraform registry publishes from tags. Three repositories carry a version tag with no matching release, and reading releases alone reports those as unpublished while the registry serves them.</p>
-    <p class="fine">Bot and human commits are separated by commit author, not by message. Subjects such as <code>fix: grept apply</code> appear under both, so the message cannot tell them apart. Almost every repository is ahead by at least one bot commit, because the AVM bot pushes to all of them daily. The <b>Nothing to release</b> card counts both states above, since neither is waiting on a maintainer.</p>
-        <p class="fine">The chart is the only part of this page that cannot be rebuilt. Every other number is recomputed from the GitHub API each morning, but the API only reports the present, so a day that goes unrecorded is lost for good. Those daily totals are committed to the repository. The per-module snapshot is not, because tomorrow's run reproduces it exactly.</p>
-      </section>
+    <p class="fine">Bot and human commits are separated by commit author, not by message. Subjects such as <code>fix: grept apply</code> appear under both, so the message cannot tell them apart. Almost every repository is ahead by at least one bot commit, because the AVM bot pushes to all of them daily.</p>
+    <p class="fine">The chart is the only part of this page that cannot be rebuilt. Every other number is recomputed from the GitHub API each morning, but the API only reports the present, so a day that goes unrecorded is lost for good. Those daily totals are committed to the repository. The per-module snapshot is not, because tomorrow's run reproduces it exactly.</p>
+  </section>
 </main>
 
 <script src="app.js"></script>

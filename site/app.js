@@ -26,8 +26,18 @@ const THEME_LABEL = { system: 'System', light: 'Light', dark: 'Dark' };
 // unit. They share an axis, which would otherwise read as though 38 repos and 5
 // issues were the same kind of quantity.
 const SERIES = [
-  { key: 'unreleasedWork', label: 'Repos with unreleased work', color: 'var(--amber)' },
-  { key: 'awaitingIssues', label: 'Issues awaiting release', color: 'var(--accent)' }
+  {
+    key: 'unreleasedWork',
+    label: 'Repos with unreleased work',
+    note: 'changes merged but not tagged yet',
+    color: 'var(--amber)'
+  },
+  {
+    key: 'awaitingIssues',
+    label: 'Issues awaiting release',
+    note: 'labelled Awaiting Release To Be Cut',
+    color: 'var(--accent)'
+  }
 ];
 
 let MODULES = [];
@@ -263,7 +273,10 @@ function renderTrend() {
     const swatch = el('span', 'swatch');
     swatch.style.background = series.color;
     item.appendChild(swatch);
-    item.appendChild(el('span', null, series.label));
+    const text = el('span', 'legend-text');
+    text.appendChild(el('span', 'legend-label', series.label));
+    if (series.note) text.appendChild(el('span', 'legend-note', series.note));
+    item.appendChild(text);
     legend.appendChild(item);
   });
 }
@@ -278,8 +291,8 @@ function median(numbers) {
 }
 
 // Every figure here describes the same population: modules whose default branch
-// carries human commits past the newest tag. Earlier versions counted four
-// different populations, which buried the subject among its opposites.
+// carries human commits past the newest tag. Each carries a note, because a bare
+// label states a consequence without saying what was counted.
 function renderCards() {
   const waiting = MODULES.filter(m => m.state === 'unreleased-work');
   const prs = waiting.reduce((total, m) => total + (m.unreleasedPrs || []).length, 0);
@@ -287,9 +300,24 @@ function renderCards() {
   const middle = median(ages);
 
   const cards = [
-    { n: waiting.length, label: 'modules waiting on a release', tone: 'warn' },
-    { n: prs, label: 'pull requests consumers cannot install', tone: '' },
-    { n: middle === null ? '—' : middle, label: 'days the median one has waited', tone: middle > AGED_DAYS ? 'alert' : '' }
+    {
+      n: waiting.length,
+      label: 'modules waiting on a release',
+      note: 'someone merged work past the newest version tag',
+      tone: 'warn'
+    },
+    {
+      n: prs,
+      label: 'merged pull requests, still unreleased',
+      note: 'across those modules, none served by the Terraform registry',
+      tone: ''
+    },
+    {
+      n: middle === null ? '—' : middle,
+      label: 'days the typical module has waited',
+      note: 'median, counted from each one\u2019s oldest unreleased commit',
+      tone: middle > AGED_DAYS ? 'alert' : ''
+    }
   ];
 
   const host = document.getElementById('cards');
@@ -299,6 +327,7 @@ function renderCards() {
     const card = el('div', 'card' + (c.tone ? ' ' + c.tone : ''));
     card.appendChild(el('div', 'n', String(c.n)));
     card.appendChild(el('div', 'k', c.label));
+    if (c.note) card.appendChild(el('div', 'k-note', c.note));
     host.appendChild(card);
   });
 }
