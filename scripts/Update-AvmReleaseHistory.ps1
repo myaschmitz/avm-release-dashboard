@@ -26,6 +26,9 @@ if (-not (Test-Path $StatusPath)) { throw "No status file at $StatusPath" }
 $status = Get-Content $StatusPath -Raw | ConvertFrom-Json
 $modules = @($status.modules)
 
+# Recorded but not charted. The dashboard dropped this series because it barely
+# moves, but a past day cannot be recomputed, so dropping the field would make the
+# metric unrecoverable rather than merely hidden.
 $aged = @($modules | Where-Object {
         $_.state -eq 'unreleased-work' -and $null -ne $_.oldestHumanDays -and $_.oldestHumanDays -gt $AgedDays
     })

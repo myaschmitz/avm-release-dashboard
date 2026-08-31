@@ -19,15 +19,15 @@ const STATE_RANK = {
   'unknown': 5
 };
 
-const CARD_KEYS = ['unreleased-work', 'aged', 'never-released', 'nothing-to-release'];
 const AGED_DAYS = 90;
 const THEME_LABEL = { system: 'System', light: 'Light', dark: 'Dark' };
 
-// Which series the trend chart draws, in legend order.
+// One series counts repositories and one counts issues, so each label names its
+// unit. They share an axis, which would otherwise read as though 38 repos and 5
+// issues were the same kind of quantity.
 const SERIES = [
-  { key: 'unreleasedWork', label: 'Unreleased work', color: 'var(--amber)' },
-  { key: 'aged', label: 'Over ' + AGED_DAYS + ' days', color: 'var(--red)' },
-  { key: 'awaitingIssues', label: 'Awaiting release', color: 'var(--accent)' }
+  { key: 'unreleasedWork', label: 'Repos with unreleased work', color: 'var(--amber)' },
+  { key: 'awaitingIssues', label: 'Issues awaiting release', color: 'var(--accent)' }
 ];
 
 let MODULES = [];
@@ -54,14 +54,6 @@ function shortDate(iso) {
   const d = new Date(iso);
   if (isNaN(d)) return '—';
   return d.toISOString().slice(0, 10);
-}
-
-function isAged(m) {
-  return (m.oldestHumanDays || 0) > AGED_DAYS;
-}
-
-function isNothingPending(m) {
-  return m.state === 'automation-only' || m.state === 'current';
 }
 
 /* theme ------------------------------------------------------------------ */
@@ -162,7 +154,8 @@ function renderTrend() {
     viewBox: `0 0 ${CHART.w} ${CHART.h}`,
     class: 'chart',
     role: 'img',
-    'aria-label': 'Counts over time'
+    'aria-label': 'Counts over time. Latest: ' +
+      SERIES.map(s => s.label + ' ' + (HISTORY[HISTORY.length - 1][s.key] || 0)).join(', ') + '.'
   });
 
   [0, 0.5, 1].forEach(fraction => {
@@ -174,17 +167,21 @@ function renderTrend() {
     chart.appendChild(label);
   });
 
+  // Drawn before the dots so it sits behind them.
+  const guide = svg('line', { y1: CHART.top, y2: CHART.top + plotH, class: 'guide', opacity: 0 });
+  chart.appendChild(guide);
+
+  const dotsByColumn = HISTORY.map(() => []);
+
   SERIES.forEach(series => {
-    const points = HISTORY.map((row, i) => `${x(i)},${y(row[series.key] || 0)}`).join(' ');
     if (HISTORY.length > 1) {
+      const points = HISTORY.map((row, i) => `${x(i)},${y(row[series.key] || 0)}`).join(' ');
       chart.appendChild(svg('polyline', { points, class: 'line', stroke: series.color }));
     }
     HISTORY.forEach((row, i) => {
       const dot = svg('circle', { cx: x(i), cy: y(row[series.key] || 0), r: 3, class: 'dot', fill: series.color });
-      const tip = svg('title');
-      tip.textContent = `${row.date} — ${series.label}: ${row[series.key] || 0}`;
-      dot.appendChild(tip);
       chart.appendChild(dot);
+      dotsByColumn[i].push(dot);
     });
   });
 
@@ -200,6 +197,65 @@ function renderTrend() {
 
   host.appendChild(chart);
 
+  // One transparent band per day, full plot height. A 3px dot is far too small to
+  // aim at, and hovering the band shows every series for that date at once rather
+  // than one value at a time.
+  const tooltip = el('div', 'chart-tip');
+  tooltip.hidden = true;
+  host.appendChild(tooltip);
+
+  const span = HISTORY.length > 1 ? plotW / (HISTORY.length - 1) : plotW;
+
+  const clearHover = () => {
+    tooltip.hidden = true;
+    guide.setAttribute('opacity', '0');
+    dotsByColumn.flat().forEach(dot => dot.setAttribute('r', '3'));
+  };
+
+  HISTORY.forEach((row, i) => {
+    const band = svg('rect', {
+      x: Math.max(0, x(i) - span / 2),
+      y: CHART.top,
+      width: HISTORY.length > 1 ? span : plotW,
+      height: plotH,
+      class: 'band'
+    });
+
+    band.addEventListener('mouseenter', () => {
+      guide.setAttribute('x1', String(x(i)));
+      guide.setAttribute('x2', String(x(i)));
+      guide.setAttribute('opacity', '1');
+
+      dotsByColumn.flat().forEach(dot => dot.setAttribute('r', '3'));
+      dotsByColumn[i].forEach(dot => dot.setAttribute('r', '5'));
+
+      tooltip.textContent = '';
+      tooltip.appendChild(el('div', 'tip-date', row.date));
+      SERIES.forEach(series => {
+        const line = el('div', 'tip-row');
+        const swatch = el('span', 'swatch');
+        swatch.style.background = series.color;
+        line.appendChild(swatch);
+        line.appendChild(el('span', 'tip-label', series.label));
+        line.appendChild(el('span', 'tip-value', String(row[series.key] ?? 0)));
+        tooltip.appendChild(line);
+      });
+
+      // The chart scales to the panel, so the anchor is a percentage of the
+      // viewBox rather than a pixel offset.
+      tooltip.style.left = (x(i) / CHART.w * 100) + '%';
+      // Flip the tooltip to the left of the guide once the point is past the middle,
+      // so it cannot overflow the panel on the right.
+      tooltip.classList.toggle('flip', x(i) > CHART.w * 0.6);
+      tooltip.hidden = false;
+    });
+
+    chart.appendChild(band);
+  });
+
+  chart.addEventListener('mouseleave', clearHover);
+  clearHover();
+
   const legend = document.getElementById('trendLegend');
   legend.textContent = '';
   SERIES.forEach(series => {
@@ -214,30 +270,35 @@ function renderTrend() {
 
 /* rendering -------------------------------------------------------------- */
 
+function median(numbers) {
+  if (numbers.length === 0) return null;
+  const sorted = [...numbers].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : Math.round((sorted[middle - 1] + sorted[middle]) / 2);
+}
+
+// Every figure here describes the same population: modules whose default branch
+// carries human commits past the newest tag. Earlier versions counted four
+// different populations, which buried the subject among its opposites.
 function renderCards() {
-  const counts = {};
-  MODULES.forEach(m => { counts[m.state] = (counts[m.state] || 0) + 1; });
+  const waiting = MODULES.filter(m => m.state === 'unreleased-work');
+  const prs = waiting.reduce((total, m) => total + (m.unreleasedPrs || []).length, 0);
+  const ages = waiting.map(m => m.oldestHumanDays).filter(d => d !== null && d !== undefined);
+  const middle = median(ages);
 
   const cards = [
-    { key: 'unreleased-work', n: counts['unreleased-work'] || 0, label: 'modules with unreleased work', tone: 'warn' },
-    { key: 'aged', n: MODULES.filter(isAged).length, label: 'unreleased over ' + AGED_DAYS + ' days', tone: 'alert' },
-    { key: 'never-released', n: counts['never-released'] || 0, label: 'modules with no version tag', tone: '' },
-    { key: 'nothing-to-release', n: MODULES.filter(isNothingPending).length, label: 'modules with nothing to release', tone: 'ok' }
+    { n: waiting.length, label: 'modules waiting on a release', tone: 'warn' },
+    { n: prs, label: 'pull requests consumers cannot install', tone: '' },
+    { n: middle === null ? '—' : middle, label: 'days the median one has waited', tone: middle > AGED_DAYS ? 'alert' : '' }
   ];
 
   const host = document.getElementById('cards');
   host.textContent = '';
 
   cards.forEach(c => {
-    const card = el('button', 'card' + (c.tone ? ' ' + c.tone : ''));
-    card.type = 'button';
+    const card = el('div', 'card' + (c.tone ? ' ' + c.tone : ''));
     card.appendChild(el('div', 'n', String(c.n)));
     card.appendChild(el('div', 'k', c.label));
-    card.addEventListener('click', () => {
-      const filter = document.getElementById('stateFilter');
-      filter.value = filter.value === c.key ? '' : c.key;
-      render();
-    });
     host.appendChild(card);
   });
 }
@@ -263,13 +324,6 @@ function compare(a, b) {
   }
   if (result === 0) result = a.module.localeCompare(b.module);
   return sortAsc ? result : -result;
-}
-
-function matchesFilter(m, filter) {
-  if (!filter) return true;
-  if (filter === 'aged') return isAged(m);
-  if (filter === 'nothing-to-release') return isNothingPending(m);
-  return m.state === filter;
 }
 
 function linkItem(number, title, url, meta) {
@@ -332,90 +386,101 @@ function detailRow(m, prs, issues) {
   return row;
 }
 
+function buildRow(m, body) {
+  const tr = el('tr');
+
+  const nameCell = cell('Module', 'cell-module');
+  const link = el('a', null, m.module);
+  link.href = m.url;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  nameCell.appendChild(link);
+  tr.appendChild(nameCell);
+
+  const stateCell = cell('State');
+  stateCell.appendChild(el('span', 'pill ' + m.state, STATE_LABEL[m.state] || m.state));
+  tr.appendChild(stateCell);
+
+  tr.appendChild(cell('Version', m.latestTag ? null : 'dim', m.latestTag || 'none'));
+  tr.appendChild(cell('Published', m.latestPublished ? null : 'dim', shortDate(m.latestPublished)));
+  tr.appendChild(cell('Unreleased commits', 'num' + (m.humanAhead ? '' : ' dim'), String(m.humanAhead ?? 0)));
+
+  const days = m.oldestHumanDays;
+  tr.appendChild(cell('Oldest, days',
+    'num' + (days ? (days > AGED_DAYS ? ' aged' : '') : ' dim'),
+    days === null || days === undefined ? '—' : String(days)));
+
+  tr.appendChild(cell('Managed files', m.pinnedVersion ? null : 'dim', m.pinnedVersion || 'none'));
+
+  const prs = m.unreleasedPrs || [];
+  const issues = m.awaitingReleaseIssues || [];
+  const hasDetail = prs.length > 0 || issues.length > 0;
+
+  if (hasDetail) {
+    tr.classList.add('expandable');
+    tr.tabIndex = 0;
+    tr.setAttribute('role', 'button');
+    tr.setAttribute('aria-expanded', String(EXPANDED.has(m.repo)));
+    nameCell.insertBefore(el('span', 'caret', '▸'), nameCell.firstChild);
+
+    const toggle = () => {
+      if (EXPANDED.has(m.repo)) { EXPANDED.delete(m.repo); } else { EXPANDED.add(m.repo); }
+      render();
+    };
+    // The module name is a link out to GitHub, so clicking it must not also expand.
+    tr.addEventListener('click', e => { if (!e.target.closest('a')) toggle(); });
+    tr.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  }
+
+  body.appendChild(tr);
+
+  if (hasDetail && EXPANDED.has(m.repo)) {
+    tr.classList.add('is-open');
+    body.appendChild(detailRow(m, prs, issues));
+  }
+}
+
 function render() {
   const term = document.getElementById('search').value.trim().toLowerCase();
-  const state = document.getElementById('stateFilter').value;
+  const matches = m => !term || m.module.toLowerCase().includes(term);
 
-  const shown = MODULES
-    .filter(m => matchesFilter(m, state))
-    .filter(m => !term || m.module.toLowerCase().includes(term))
-    .sort(compare);
+  // The page is about modules waiting on a release. Everything else stays reachable
+  // but collapsed, so 150 rows that need no action do not bury the 38 that do.
+  const waiting = MODULES.filter(m => m.state === 'unreleased-work' && matches(m)).sort(compare);
+  const rest = MODULES.filter(m => m.state !== 'unreleased-work' && matches(m)).sort(compare);
 
   const body = document.getElementById('rows');
   body.textContent = '';
+  waiting.forEach(m => buildRow(m, body));
 
-  shown.forEach(m => {
-    const tr = el('tr');
+  const restBody = document.getElementById('restRows');
+  restBody.textContent = '';
+  rest.forEach(m => buildRow(m, restBody));
 
-    const nameCell = cell('Module', 'cell-module');
-    const link = el('a', null, m.module);
-    link.href = m.url;
-    link.target = '_blank';
-    link.rel = 'noopener';
-    nameCell.appendChild(link);
-    tr.appendChild(nameCell);
+  const counts = {};
+  rest.forEach(m => { counts[m.state] = (counts[m.state] || 0) + 1; });
+  const parts = [];
+  if (counts['automation-only'] || counts['current']) {
+    parts.push(((counts['automation-only'] || 0) + (counts['current'] || 0)) + ' with nothing to release');
+  }
+  if (counts['never-released']) parts.push(counts['never-released'] + ' with no version tag');
 
-    const stateCell = cell('State');
-    stateCell.appendChild(el('span', 'pill ' + m.state, STATE_LABEL[m.state] || m.state));
-    tr.appendChild(stateCell);
+  document.getElementById('restCount').textContent = rest.length + ' other modules';
+  document.getElementById('restNote').textContent = parts.length ? parts.join(', ') : '';
+  document.getElementById('restPanel').hidden = rest.length === 0;
 
-    tr.appendChild(cell('Version', m.latestTag ? null : 'dim', m.latestTag || 'none'));
-    tr.appendChild(cell('Published', m.latestPublished ? null : 'dim', shortDate(m.latestPublished)));
-    tr.appendChild(cell('Unreleased commits', 'num' + (m.humanAhead ? '' : ' dim'), String(m.humanAhead ?? 0)));
-
-    const days = m.oldestHumanDays;
-    tr.appendChild(cell('Oldest, days',
-      'num' + (days ? (days > AGED_DAYS ? ' aged' : '') : ' dim'),
-      days === null || days === undefined ? '—' : String(days)));
-
-    tr.appendChild(cell('Managed files', m.pinnedVersion ? null : 'dim', m.pinnedVersion || 'none'));
-
-    const prs = m.unreleasedPrs || [];
-    const issues = m.awaitingReleaseIssues || [];
-    const hasDetail = prs.length > 0 || issues.length > 0;
-
-    if (hasDetail) {
-      tr.classList.add('expandable');
-      tr.tabIndex = 0;
-      tr.setAttribute('role', 'button');
-      tr.setAttribute('aria-expanded', String(EXPANDED.has(m.repo)));
-      nameCell.insertBefore(el('span', 'caret', '▸'), nameCell.firstChild);
-
-      const toggle = () => {
-        if (EXPANDED.has(m.repo)) { EXPANDED.delete(m.repo); } else { EXPANDED.add(m.repo); }
-        render();
-      };
-      // The module name is a link out to GitHub, so clicking it must not also expand.
-      tr.addEventListener('click', e => { if (!e.target.closest('a')) toggle(); });
-      tr.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-      });
-    }
-
-    body.appendChild(tr);
-
-    if (hasDetail && EXPANDED.has(m.repo)) {
-      tr.classList.add('is-open');
-      body.appendChild(detailRow(m, prs, issues));
-    }
-  });
-
-  document.getElementById('empty').hidden = shown.length > 0;
+  document.getElementById('empty').hidden = waiting.length > 0;
 
   document.querySelectorAll('th[data-sort]').forEach(th => {
     th.classList.toggle('sorted', th.dataset.sort === sortKey);
     th.classList.toggle('asc', th.dataset.sort === sortKey && sortAsc);
   });
-
-  const active = document.getElementById('stateFilter').value;
-  document.querySelectorAll('.card').forEach((card, i) => {
-    card.classList.toggle('is-active', CARD_KEYS[i] === active);
-  });
 }
 
 function wire() {
   document.getElementById('search').addEventListener('input', render);
-  document.getElementById('stateFilter').addEventListener('change', render);
   document.querySelectorAll('th[data-sort]').forEach(th => {
     th.addEventListener('click', () => {
       const key = th.dataset.sort;

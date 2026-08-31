@@ -19,7 +19,12 @@ http.createServer((req, res) => {
   if (!file.startsWith(root)) { res.writeHead(403).end('no'); return; }
   fs.readFile(file, (err, buf) => {
     if (err) { res.writeHead(404).end('not found'); return; }
-    res.writeHead(200, { 'Content-Type': types[path.extname(file)] || 'application/octet-stream' });
+    res.writeHead(200, {
+      'Content-Type': types[path.extname(file)] || 'application/octet-stream',
+      // Without this the browser caches app.js and styles.css heuristically, and an
+      // edit only appears after a hard reload or a hand-written ?v= on the URL.
+      'Cache-Control': 'no-store, max-age=0'
+    });
     res.end(buf);
   });
 }).listen(port, () => console.log('serving on http://localhost:' + port));
