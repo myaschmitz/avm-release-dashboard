@@ -231,6 +231,15 @@ function Compare-AvmHclField {
     $changes = [System.Collections.Generic.List[object]]::new()
     $get = { param($map, $key) if ($map.ContainsKey($key)) { [string]$map[$key] } else { $null } }
 
+    $beforeType = & $get $Before 'type'
+    $afterType = & $get $After 'type'
+    $typeChanged = $beforeType -ne $afterType
+    $typeIsShort = ($null -ne $beforeType -and $null -ne $afterType -and $beforeType.Length -le 40 -and $afterType.Length -le 40)
+
+    $beforeCount = [int](& $get $Before 'validationCount')
+    $afterCount = [int](& $get $After 'validationCount')
+    $validationAdded = $afterCount -gt $beforeCount
+
     $beforeNullable = & $get $Before 'nullable'
     $afterNullable = & $get $After 'nullable'
     if ($beforeNullable -ne $afterNullable) {
@@ -244,15 +253,29 @@ function Compare-AvmHclField {
         }
     }
 
-    $beforeCount = [int](& $get $Before 'validationCount')
-    $afterCount = [int](& $get $After 'validationCount')
-    if ($afterCount -gt $beforeCount) {
+    if ($typeChanged -and $validationAdded) {
+        # A rule added beside a loosened type usually restores what the type stopped
+        # enforcing, so the pair cannot be ranked from counts alone. AVM's storage
+        # account did exactly this: `subresource_name` moved from `string` to
+        # `optional(string, null)` and a rule now requires it to be non-null, which
+        # accepts precisely the same input as before and only changes the error text.
+        # Judging the rule on its own reported that as breaking, which it is not.
         $n = $afterCount - $beforeCount
-        $changes.Add([pscustomobject]@{ declaration = $Name; verdict = 'breaking'; detail = "$n validation rule$(if ($n -ne 1) { 's' }) added, so input that used to pass may now fail" })
-    } elseif ($afterCount -lt $beforeCount) {
+        $changes.Add([pscustomobject]@{
+                declaration = $Name
+                verdict     = 'unclear'
+                detail      = "the type changed and $n validation rule$(if ($n -ne 1) { 's were' } else { ' was' }) added, which often compensate for each other, so the pair needs reading together"
+            })
+    }
+    elseif ($validationAdded) {
+        $n = $afterCount - $beforeCount
+        $changes.Add([pscustomobject]@{ declaration = $Name; verdict = 'breaking'; detail = "$n validation rule$(if ($n -ne 1) { 's' }) added with no type change, so input that used to pass may now fail" })
+    }
+    elseif ($afterCount -lt $beforeCount) {
         $n = $beforeCount - $afterCount
         $changes.Add([pscustomobject]@{ declaration = $Name; verdict = 'relaxed'; detail = "$n validation rule$(if ($n -ne 1) { 's' }) removed" })
-    } elseif ((& $get $Before 'validation') -ne (& $get $After 'validation')) {
+    }
+    elseif ((& $get $Before 'validation') -ne (& $get $After 'validation')) {
         $changes.Add([pscustomobject]@{ declaration = $Name; verdict = 'unclear'; detail = 'a validation rule was rewritten, so whether it accepts more or less needs reading' })
     }
 
@@ -270,11 +293,10 @@ function Compare-AvmHclField {
         }
     }
 
-    $beforeType = & $get $Before 'type'
-    $afterType = & $get $After 'type'
-    if ($beforeType -ne $afterType) {
-        $short = ($null -ne $beforeType -and $null -ne $afterType -and $beforeType.Length -le 40 -and $afterType.Length -le 40)
-        if ($short) {
+    # Reported only when no validation rule was added, because the combined case
+    # above already names the type change and saying it twice adds noise.
+    if ($typeChanged -and -not $validationAdded) {
+        if ($typeIsShort) {
             $changes.Add([pscustomobject]@{ declaration = $Name; verdict = 'breaking'; detail = "type changed from $beforeType to $afterType" })
         } else {
             # Object types run to thousands of characters. Adding an optional
