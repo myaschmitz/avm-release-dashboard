@@ -42,11 +42,11 @@
   {
     "date": "2026-09-01",
     "repoCount": 188,
-    "unreleasedWork": 36,
-    "aged": 19,
+    "unreleasedWork": 34,
+    "aged": 17,
     "neverReleased": 46,
-    "nothingToRelease": 106,
-    "unreleasedPrs": 88,
+    "nothingToRelease": 108,
+    "unreleasedPrs": 82,
     "awaitingIssues": 6
   }
 ]
