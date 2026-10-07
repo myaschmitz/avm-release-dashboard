@@ -398,5 +398,15 @@
     "nothingToRelease": 17,
     "unreleasedPrs": 202,
     "awaitingIssues": 8
+  },
+  {
+    "date": "2026-10-07",
+    "repoCount": 185,
+    "unreleasedWork": 126,
+    "aged": 17,
+    "neverReleased": 40,
+    "nothingToRelease": 19,
+    "unreleasedPrs": 204,
+    "awaitingIssues": 7
   }
 ]
