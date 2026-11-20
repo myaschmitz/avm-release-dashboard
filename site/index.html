@@ -89,6 +89,27 @@
     <p class="fine" id="trendNote"></p>
   </section>
 
+  <section class="panel" id="waitPanel" hidden>
+    <div class="panel-head">
+      <h2>How long commits wait for a release</h2>
+    </div>
+    <div class="chart-pair">
+      <div class="chart-cell">
+        <h3>Waiting now</h3>
+        <p class="fine">Age of human commits on the default branch that no version tag includes yet. Drops when a backlog is released.</p>
+        <p class="chart-summary" id="waitNowSummary"></p>
+        <div class="chart-holder" id="waitNow"></div>
+      </div>
+      <div class="chart-cell">
+        <h3>Time to release</h3>
+        <p class="fine">Days from landing to the first tag, for commits released in the four weeks before each point. Drops when work ships quickly.</p>
+        <p class="chart-summary" id="waitShippedSummary"></p>
+        <div class="chart-holder" id="waitShipped"></div>
+      </div>
+    </div>
+    <p class="fine" id="waitNote"></p>
+  </section>
+
   <section class="panel">
     <div class="panel-head">
       <h2>Waiting on a release</h2>
@@ -156,7 +177,8 @@
     <p class="fine">Each module's wait is measured from its oldest unreleased commit, shown in the <b>Oldest days</b> column. The card at the top reports the median across every module in the table, so half sit above that figure and half below.</p>
     <p class="fine">Versions come from git tags rather than GitHub releases, because the Terraform registry publishes from tags. Three repositories carry a version tag with no matching release, and reading releases alone reports those as unpublished while the registry serves them.</p>
     <p class="fine">Bot and human commits are separated by commit author, not by message. Subjects such as <code>fix: grept apply</code> appear under both, so the message cannot tell them apart. Almost every repository is ahead by at least one bot commit, because the AVM bot pushes to all of them daily.</p>
-    <p class="fine">The chart is the only part of this page that cannot be rebuilt. Every other number is recomputed from the GitHub API each morning, but the API only reports the present, so a day that goes unrecorded is lost for good. Those daily totals are committed to the repository. The per-module snapshot is not, because tomorrow's run reproduces it exactly.</p>
+    <p class="fine">The <b>Over time</b> chart is the only part of this page that cannot be rebuilt. Every other number is recomputed from the GitHub API each morning, but the API only reports the present, so a day that goes unrecorded is lost for good. Those daily totals are committed to the repository. The per-module snapshot is not, because tomorrow's run reproduces it exactly.</p>
+    <p class="fine">The wait charts are rebuilt from git history on every run, so they reach back before this page existed. A commit counts once it lands on the default branch, by first-parent history, and stops waiting at the first version tag that contains it. The tag's time comes from its GitHub release where one exists, because most AVM tags are lightweight and git records no time for them. Commits in a module's first version are left out, because they are initial development rather than work waiting on a release. Archived modules drop out of the whole series, so older points describe today's modules only.</p>
   </section>
 </main>
 

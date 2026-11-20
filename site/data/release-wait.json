@@ -1,0 +1,2275 @@
+{
+  "generatedAt": "2026-11-20T20:12:15Z",
+  "repoCount": 142,
+  "failedRepos": [],
+  "commitCount": 2923,
+  "stepDays": 7,
+  "windowDays": 28,
+  "points": [
+    {
+      "date": "2024-01-05",
+      "waiting": {
+        "count": 14,
+        "median": 15.8,
+        "p90": 31.1,
+        "mean": 20.1
+      },
+      "shipped": {
+        "count": 0,
+        "median": null,
+        "p90": null,
+        "mean": null
+      }
+    },
+    {
+      "date": "2024-01-12",
+      "waiting": {
+        "count": 16,
+        "median": 22.8,
+        "p90": 38.1,
+        "mean": 24.3
+      },
+      "shipped": {
+        "count": 0,
+        "median": null,
+        "p90": null,
+        "mean": null
+      }
+    },
+    {
+      "date": "2024-01-19",
+      "waiting": {
+        "count": 17,
+        "median": 29.8,
+        "p90": 45.1,
+        "mean": 29.5
+      },
+      "shipped": {
+        "count": 1,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 0.0
+      }
+    },
+    {
+      "date": "2024-01-26",
+      "waiting": {
+        "count": 19,
+        "median": 36.3,
+        "p90": 52.1,
+        "mean": 32.8
+      },
+      "shipped": {
+        "count": 2,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 0.0
+      }
+    },
+    {
+      "date": "2024-02-02",
+      "waiting": {
+        "count": 28,
+        "median": 27.0,
+        "p90": 59.1,
+        "mean": 27.8
+      },
+      "shipped": {
+        "count": 4,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 0.0
+      }
+    },
+    {
+      "date": "2024-02-09",
+      "waiting": {
+        "count": 40,
+        "median": 12.1,
+        "p90": 58.9,
+        "mean": 25.1
+      },
+      "shipped": {
+        "count": 12,
+        "median": 1.0,
+        "p90": 5.0,
+        "mean": 1.5
+      }
+    },
+    {
+      "date": "2024-02-16",
+      "waiting": {
+        "count": 41,
+        "median": 16.7,
+        "p90": 65.9,
+        "mean": 30.6
+      },
+      "shipped": {
+        "count": 15,
+        "median": 2.0,
+        "p90": 12.0,
+        "mean": 3.3
+      }
+    },
+    {
+      "date": "2024-02-23",
+      "waiting": {
+        "count": 43,
+        "median": 23.4,
+        "p90": 72.9,
+        "mean": 35.7
+      },
+      "shipped": {
+        "count": 26,
+        "median": 0.0,
+        "p90": 12.0,
+        "mean": 2.6
+      }
+    },
+    {
+      "date": "2024-03-01",
+      "waiting": {
+        "count": 45,
+        "median": 30.2,
+        "p90": 79.9,
+        "mean": 39.7
+      },
+      "shipped": {
+        "count": 34,
+        "median": 0.0,
+        "p90": 13.0,
+        "mean": 3.4
+      }
+    },
+    {
+      "date": "2024-03-08",
+      "waiting": {
+        "count": 40,
+        "median": 30.7,
+        "p90": 86.9,
+        "mean": 39.7
+      },
+      "shipped": {
+        "count": 41,
+        "median": 1.0,
+        "p90": 54.0,
+        "mean": 13.7
+      }
+    },
+    {
+      "date": "2024-03-15",
+      "waiting": {
+        "count": 37,
+        "median": 37.4,
+        "p90": 85.8,
+        "mean": 38.2
+      },
+      "shipped": {
+        "count": 62,
+        "median": 1.5,
+        "p90": 54.0,
+        "mean": 16.1
+      }
+    },
+    {
+      "date": "2024-03-22",
+      "waiting": {
+        "count": 46,
+        "median": 11.4,
+        "p90": 92.8,
+        "mean": 29.0
+      },
+      "shipped": {
+        "count": 63,
+        "median": 5.0,
+        "p90": 61.0,
+        "mean": 21.1
+      }
+    },
+    {
+      "date": "2024-03-29",
+      "waiting": {
+        "count": 40,
+        "median": 7.6,
+        "p90": 37.3,
+        "mean": 14.9
+      },
+      "shipped": {
+        "count": 86,
+        "median": 6.5,
+        "p90": 96.0,
+        "mean": 27.2
+      }
+    },
+    {
+      "date": "2024-04-05",
+      "waiting": {
+        "count": 74,
+        "median": 4.5,
+        "p90": 24.8,
+        "mean": 11.0
+      },
+      "shipped": {
+        "count": 87,
+        "median": 5.0,
+        "p90": 96.0,
+        "mean": 22.5
+      }
+    },
+    {
+      "date": "2024-04-12",
+      "waiting": {
+        "count": 77,
+        "median": 8.9,
+        "p90": 31.8,
+        "mean": 17.0
+      },
+      "shipped": {
+        "count": 68,
+        "median": 5.5,
+        "p90": 96.0,
+        "mean": 22.3
+      }
+    },
+    {
+      "date": "2024-04-19",
+      "waiting": {
+        "count": 87,
+        "median": 14.3,
+        "p90": 38.4,
+        "mean": 20.4
+      },
+      "shipped": {
+        "count": 79,
+        "median": 1.0,
+        "p90": 53.0,
+        "mean": 16.3
+      }
+    },
+    {
+      "date": "2024-04-26",
+      "waiting": {
+        "count": 89,
+        "median": 21.3,
+        "p90": 45.4,
+        "mean": 26.5
+      },
+      "shipped": {
+        "count": 51,
+        "median": 0.0,
+        "p90": 14.0,
+        "mean": 5.1
+      }
+    },
+    {
+      "date": "2024-05-03",
+      "waiting": {
+        "count": 91,
+        "median": 28.3,
+        "p90": 50.4,
+        "mean": 29.7
+      },
+      "shipped": {
+        "count": 55,
+        "median": 1.0,
+        "p90": 27.0,
+        "mean": 8.5
+      }
+    },
+    {
+      "date": "2024-05-10",
+      "waiting": {
+        "count": 90,
+        "median": 30.3,
+        "p90": 51.4,
+        "mean": 28.9
+      },
+      "shipped": {
+        "count": 89,
+        "median": 4.0,
+        "p90": 38.0,
+        "mean": 13.4
+      }
+    },
+    {
+      "date": "2024-05-17",
+      "waiting": {
+        "count": 89,
+        "median": 37.1,
+        "p90": 60.3,
+        "mean": 34.0
+      },
+      "shipped": {
+        "count": 86,
+        "median": 4.0,
+        "p90": 39.0,
+        "mean": 14.6
+      }
+    },
+    {
+      "date": "2024-05-24",
+      "waiting": {
+        "count": 97,
+        "median": 22.3,
+        "p90": 63.6,
+        "mean": 32.8
+      },
+      "shipped": {
+        "count": 101,
+        "median": 8.0,
+        "p90": 42.0,
+        "mean": 16.8
+      }
+    },
+    {
+      "date": "2024-05-31",
+      "waiting": {
+        "count": 89,
+        "median": 24.2,
+        "p90": 70.6,
+        "mean": 32.8
+      },
+      "shipped": {
+        "count": 114,
+        "median": 8.5,
+        "p90": 54.0,
+        "mean": 20.3
+      }
+    },
+    {
+      "date": "2024-06-07",
+      "waiting": {
+        "count": 92,
+        "median": 30.7,
+        "p90": 77.6,
+        "mean": 38.0
+      },
+      "shipped": {
+        "count": 83,
+        "median": 8.0,
+        "p90": 57.0,
+        "mean": 19.2
+      }
+    },
+    {
+      "date": "2024-06-14",
+      "waiting": {
+        "count": 92,
+        "median": 36.2,
+        "p90": 84.6,
+        "mean": 41.9
+      },
+      "shipped": {
+        "count": 79,
+        "median": 8.0,
+        "p90": 66.0,
+        "mean": 21.5
+      }
+    },
+    {
+      "date": "2024-06-21",
+      "waiting": {
+        "count": 107,
+        "median": 32.4,
+        "p90": 91.4,
+        "mean": 39.8
+      },
+      "shipped": {
+        "count": 83,
+        "median": 1.0,
+        "p90": 65.0,
+        "mean": 18.3
+      }
+    },
+    {
+      "date": "2024-06-28",
+      "waiting": {
+        "count": 101,
+        "median": 37.8,
+        "p90": 94.6,
+        "mean": 42.4
+      },
+      "shipped": {
+        "count": 87,
+        "median": 1.0,
+        "p90": 51.0,
+        "mean": 15.5
+      }
+    },
+    {
+      "date": "2024-07-05",
+      "waiting": {
+        "count": 106,
+        "median": 42.7,
+        "p90": 101.6,
+        "mean": 45.0
+      },
+      "shipped": {
+        "count": 103,
+        "median": 2.0,
+        "p90": 44.0,
+        "mean": 15.0
+      }
+    },
+    {
+      "date": "2024-07-12",
+      "waiting": {
+        "count": 128,
+        "median": 25.6,
+        "p90": 99.0,
+        "mean": 41.2
+      },
+      "shipped": {
+        "count": 99,
+        "median": 3.0,
+        "p90": 44.0,
+        "mean": 15.5
+      }
+    },
+    {
+      "date": "2024-07-19",
+      "waiting": {
+        "count": 98,
+        "median": 31.5,
+        "p90": 115.6,
+        "mean": 46.3
+      },
+      "shipped": {
+        "count": 158,
+        "median": 7.0,
+        "p90": 58.0,
+        "mean": 18.0
+      }
+    },
+    {
+      "date": "2024-07-26",
+      "waiting": {
+        "count": 100,
+        "median": 30.2,
+        "p90": 122.6,
+        "mean": 49.0
+      },
+      "shipped": {
+        "count": 136,
+        "median": 7.0,
+        "p90": 59.0,
+        "mean": 18.1
+      }
+    },
+    {
+      "date": "2024-08-02",
+      "waiting": {
+        "count": 101,
+        "median": 30.6,
+        "p90": 119.3,
+        "mean": 49.5
+      },
+      "shipped": {
+        "count": 148,
+        "median": 6.0,
+        "p90": 65.0,
+        "mean": 19.1
+      }
+    },
+    {
+      "date": "2024-08-09",
+      "waiting": {
+        "count": 97,
+        "median": 30.4,
+        "p90": 136.6,
+        "mean": 52.3
+      },
+      "shipped": {
+        "count": 158,
+        "median": 7.0,
+        "p90": 70.0,
+        "mean": 20.1
+      }
+    },
+    {
+      "date": "2024-08-16",
+      "waiting": {
+        "count": 86,
+        "median": 40.6,
+        "p90": 143.6,
+        "mean": 60.7
+      },
+      "shipped": {
+        "count": 114,
+        "median": 4.5,
+        "p90": 43.0,
+        "mean": 18.5
+      }
+    },
+    {
+      "date": "2024-08-23",
+      "waiting": {
+        "count": 92,
+        "median": 37.5,
+        "p90": 150.6,
+        "mean": 63.3
+      },
+      "shipped": {
+        "count": 106,
+        "median": 3.5,
+        "p90": 43.0,
+        "mean": 16.8
+      }
+    },
+    {
+      "date": "2024-08-30",
+      "waiting": {
+        "count": 106,
+        "median": 37.0,
+        "p90": 147.3,
+        "mean": 59.9
+      },
+      "shipped": {
+        "count": 87,
+        "median": 4.0,
+        "p90": 43.0,
+        "mean": 15.6
+      }
+    },
+    {
+      "date": "2024-09-06",
+      "waiting": {
+        "count": 123,
+        "median": 35.6,
+        "p90": 154.3,
+        "mean": 56.9
+      },
+      "shipped": {
+        "count": 77,
+        "median": 1.0,
+        "p90": 40.0,
+        "mean": 11.3
+      }
+    },
+    {
+      "date": "2024-09-13",
+      "waiting": {
+        "count": 153,
+        "median": 19.4,
+        "p90": 129.4,
+        "mean": 46.4
+      },
+      "shipped": {
+        "count": 69,
+        "median": 0.0,
+        "p90": 42.0,
+        "mean": 16.4
+      }
+    },
+    {
+      "date": "2024-09-20",
+      "waiting": {
+        "count": 154,
+        "median": 25.3,
+        "p90": 134.3,
+        "mean": 47.8
+      },
+      "shipped": {
+        "count": 94,
+        "median": 0.0,
+        "p90": 43.0,
+        "mean": 20.2
+      }
+    },
+    {
+      "date": "2024-09-27",
+      "waiting": {
+        "count": 155,
+        "median": 31.4,
+        "p90": 141.3,
+        "mean": 53.8
+      },
+      "shipped": {
+        "count": 98,
+        "median": 0.0,
+        "p90": 42.0,
+        "mean": 18.6
+      }
+    },
+    {
+      "date": "2024-10-04",
+      "waiting": {
+        "count": 163,
+        "median": 32.0,
+        "p90": 142.9,
+        "mean": 57.2
+      },
+      "shipped": {
+        "count": 89,
+        "median": 0.0,
+        "p90": 60.0,
+        "mean": 20.2
+      }
+    },
+    {
+      "date": "2024-10-11",
+      "waiting": {
+        "count": 120,
+        "median": 37.8,
+        "p90": 115.5,
+        "mean": 50.6
+      },
+      "shipped": {
+        "count": 140,
+        "median": 7.0,
+        "p90": 138.0,
+        "mean": 37.6
+      }
+    },
+    {
+      "date": "2024-10-18",
+      "waiting": {
+        "count": 130,
+        "median": 36.2,
+        "p90": 122.5,
+        "mean": 47.1
+      },
+      "shipped": {
+        "count": 147,
+        "median": 19.0,
+        "p90": 122.0,
+        "mean": 36.1
+      }
+    },
+    {
+      "date": "2024-10-25",
+      "waiting": {
+        "count": 128,
+        "median": 42.0,
+        "p90": 129.5,
+        "mean": 50.5
+      },
+      "shipped": {
+        "count": 162,
+        "median": 18.5,
+        "p90": 114.0,
+        "mean": 35.8
+      }
+    },
+    {
+      "date": "2024-11-01",
+      "waiting": {
+        "count": 123,
+        "median": 25.2,
+        "p90": 136.5,
+        "mean": 50.2
+      },
+      "shipped": {
+        "count": 193,
+        "median": 19.0,
+        "p90": 105.0,
+        "mean": 35.6
+      }
+    },
+    {
+      "date": "2024-11-08",
+      "waiting": {
+        "count": 116,
+        "median": 32.6,
+        "p90": 150.9,
+        "mean": 57.2
+      },
+      "shipped": {
+        "count": 143,
+        "median": 4.0,
+        "p90": 69.0,
+        "mean": 20.9
+      }
+    },
+    {
+      "date": "2024-11-15",
+      "waiting": {
+        "count": 115,
+        "median": 40.1,
+        "p90": 157.9,
+        "mean": 63.8
+      },
+      "shipped": {
+        "count": 123,
+        "median": 5.0,
+        "p90": 60.0,
+        "mean": 18.6
+      }
+    },
+    {
+      "date": "2024-11-22",
+      "waiting": {
+        "count": 118,
+        "median": 42.9,
+        "p90": 164.9,
+        "mean": 65.3
+      },
+      "shipped": {
+        "count": 146,
+        "median": 1.0,
+        "p90": 53.0,
+        "mean": 14.8
+      }
+    },
+    {
+      "date": "2024-11-29",
+      "waiting": {
+        "count": 116,
+        "median": 49.2,
+        "p90": 171.9,
+        "mean": 71.6
+      },
+      "shipped": {
+        "count": 124,
+        "median": 0.0,
+        "p90": 30.0,
+        "mean": 9.6
+      }
+    },
+    {
+      "date": "2024-12-06",
+      "waiting": {
+        "count": 90,
+        "median": 53.4,
+        "p90": 200.6,
+        "mean": 75.3
+      },
+      "shipped": {
+        "count": 148,
+        "median": 1.0,
+        "p90": 84.0,
+        "mean": 20.7
+      }
+    },
+    {
+      "date": "2024-12-13",
+      "waiting": {
+        "count": 100,
+        "median": 53.4,
+        "p90": 201.9,
+        "mean": 72.3
+      },
+      "shipped": {
+        "count": 140,
+        "median": 1.0,
+        "p90": 87.0,
+        "mean": 22.6
+      }
+    },
+    {
+      "date": "2024-12-20",
+      "waiting": {
+        "count": 104,
+        "median": 59.9,
+        "p90": 208.9,
+        "mean": 76.2
+      },
+      "shipped": {
+        "count": 90,
+        "median": 1.0,
+        "p90": 90.0,
+        "mean": 30.0
+      }
+    },
+    {
+      "date": "2024-12-27",
+      "waiting": {
+        "count": 110,
+        "median": 59.4,
+        "p90": 199.9,
+        "mean": 78.5
+      },
+      "shipped": {
+        "count": 89,
+        "median": 1.0,
+        "p90": 91.0,
+        "mean": 28.3
+      }
+    },
+    {
+      "date": "2025-01-03",
+      "waiting": {
+        "count": 114,
+        "median": 64.8,
+        "p90": 206.9,
+        "mean": 82.6
+      },
+      "shipped": {
+        "count": 37,
+        "median": 0.0,
+        "p90": 34.0,
+        "mean": 7.2
+      }
+    },
+    {
+      "date": "2025-01-10",
+      "waiting": {
+        "count": 120,
+        "median": 59.0,
+        "p90": 206.5,
+        "mean": 81.8
+      },
+      "shipped": {
+        "count": 76,
+        "median": 0.0,
+        "p90": 15.0,
+        "mean": 6.4
+      }
+    },
+    {
+      "date": "2025-01-17",
+      "waiting": {
+        "count": 119,
+        "median": 61.1,
+        "p90": 220.9,
+        "mean": 86.8
+      },
+      "shipped": {
+        "count": 81,
+        "median": 0.0,
+        "p90": 34.0,
+        "mean": 10.0
+      }
+    },
+    {
+      "date": "2025-01-24",
+      "waiting": {
+        "count": 88,
+        "median": 67.5,
+        "p90": 191.5,
+        "mean": 84.6
+      },
+      "shipped": {
+        "count": 122,
+        "median": 0.0,
+        "p90": 137.0,
+        "mean": 35.9
+      }
+    },
+    {
+      "date": "2025-01-31",
+      "waiting": {
+        "count": 92,
+        "median": 73.6,
+        "p90": 183.4,
+        "mean": 85.5
+      },
+      "shipped": {
+        "count": 156,
+        "median": 0.0,
+        "p90": 97.0,
+        "mean": 29.4
+      }
+    },
+    {
+      "date": "2025-02-07",
+      "waiting": {
+        "count": 94,
+        "median": 75.9,
+        "p90": 190.4,
+        "mean": 87.7
+      },
+      "shipped": {
+        "count": 120,
+        "median": 0.0,
+        "p90": 137.0,
+        "mean": 36.9
+      }
+    },
+    {
+      "date": "2025-02-14",
+      "waiting": {
+        "count": 93,
+        "median": 84.2,
+        "p90": 197.4,
+        "mean": 95.5
+      },
+      "shipped": {
+        "count": 114,
+        "median": 0.0,
+        "p90": 138.0,
+        "mean": 36.1
+      }
+    },
+    {
+      "date": "2025-02-21",
+      "waiting": {
+        "count": 90,
+        "median": 93.7,
+        "p90": 204.4,
+        "mean": 104.1
+      },
+      "shipped": {
+        "count": 77,
+        "median": 0.0,
+        "p90": 31.0,
+        "mean": 8.6
+      }
+    },
+    {
+      "date": "2025-02-28",
+      "waiting": {
+        "count": 90,
+        "median": 100.7,
+        "p90": 211.4,
+        "mean": 110.1
+      },
+      "shipped": {
+        "count": 51,
+        "median": 0.0,
+        "p90": 46.0,
+        "mean": 10.5
+      }
+    },
+    {
+      "date": "2025-03-07",
+      "waiting": {
+        "count": 86,
+        "median": 106.5,
+        "p90": 233.5,
+        "mean": 116.2
+      },
+      "shipped": {
+        "count": 58,
+        "median": 0.0,
+        "p90": 57.0,
+        "mean": 13.4
+      }
+    },
+    {
+      "date": "2025-03-14",
+      "waiting": {
+        "count": 93,
+        "median": 102.3,
+        "p90": 225.4,
+        "mean": 112.8
+      },
+      "shipped": {
+        "count": 54,
+        "median": 0.0,
+        "p90": 58.0,
+        "mean": 16.6
+      }
+    },
+    {
+      "date": "2025-03-21",
+      "waiting": {
+        "count": 96,
+        "median": 108.7,
+        "p90": 232.4,
+        "mean": 116.0
+      },
+      "shipped": {
+        "count": 55,
+        "median": 0.0,
+        "p90": 57.0,
+        "mean": 13.8
+      }
+    },
+    {
+      "date": "2025-03-28",
+      "waiting": {
+        "count": 97,
+        "median": 115.2,
+        "p90": 239.4,
+        "mean": 121.7
+      },
+      "shipped": {
+        "count": 48,
+        "median": 0.0,
+        "p90": 58.0,
+        "mean": 14.0
+      }
+    },
+    {
+      "date": "2025-04-04",
+      "waiting": {
+        "count": 96,
+        "median": 122.7,
+        "p90": 246.4,
+        "mean": 129.8
+      },
+      "shipped": {
+        "count": 34,
+        "median": 0.0,
+        "p90": 19.0,
+        "mean": 5.2
+      }
+    },
+    {
+      "date": "2025-04-11",
+      "waiting": {
+        "count": 97,
+        "median": 129.2,
+        "p90": 253.4,
+        "mean": 135.4
+      },
+      "shipped": {
+        "count": 36,
+        "median": 0.0,
+        "p90": 1.0,
+        "mean": 1.4
+      }
+    },
+    {
+      "date": "2025-04-18",
+      "waiting": {
+        "count": 97,
+        "median": 136.2,
+        "p90": 260.4,
+        "mean": 142.2
+      },
+      "shipped": {
+        "count": 33,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 1.2
+      }
+    },
+    {
+      "date": "2025-04-25",
+      "waiting": {
+        "count": 91,
+        "median": 144.3,
+        "p90": 267.4,
+        "mean": 152.1
+      },
+      "shipped": {
+        "count": 41,
+        "median": 0.0,
+        "p90": 48.0,
+        "mean": 16.3
+      }
+    },
+    {
+      "date": "2025-05-02",
+      "waiting": {
+        "count": 85,
+        "median": 163.7,
+        "p90": 289.5,
+        "mean": 161.8
+      },
+      "shipped": {
+        "count": 51,
+        "median": 0.0,
+        "p90": 94.0,
+        "mean": 26.3
+      }
+    },
+    {
+      "date": "2025-05-09",
+      "waiting": {
+        "count": 85,
+        "median": 170.7,
+        "p90": 296.5,
+        "mean": 166.7
+      },
+      "shipped": {
+        "count": 58,
+        "median": 0.0,
+        "p90": 94.0,
+        "mean": 26.2
+      }
+    },
+    {
+      "date": "2025-05-16",
+      "waiting": {
+        "count": 87,
+        "median": 175.2,
+        "p90": 303.5,
+        "mean": 168.6
+      },
+      "shipped": {
+        "count": 52,
+        "median": 0.0,
+        "p90": 101.0,
+        "mean": 30.9
+      }
+    },
+    {
+      "date": "2025-05-23",
+      "waiting": {
+        "count": 85,
+        "median": 172.3,
+        "p90": 310.5,
+        "mean": 167.9
+      },
+      "shipped": {
+        "count": 67,
+        "median": 0.0,
+        "p90": 101.0,
+        "mean": 29.5
+      }
+    },
+    {
+      "date": "2025-05-30",
+      "waiting": {
+        "count": 86,
+        "median": 179.2,
+        "p90": 317.5,
+        "mean": 172.9
+      },
+      "shipped": {
+        "count": 66,
+        "median": 0.0,
+        "p90": 93.0,
+        "mean": 19.6
+      }
+    },
+    {
+      "date": "2025-06-06",
+      "waiting": {
+        "count": 80,
+        "median": 197.5,
+        "p90": 324.5,
+        "mean": 185.0
+      },
+      "shipped": {
+        "count": 75,
+        "median": 0.0,
+        "p90": 110.0,
+        "mean": 23.7
+      }
+    },
+    {
+      "date": "2025-06-13",
+      "waiting": {
+        "count": 87,
+        "median": 190.6,
+        "p90": 331.5,
+        "mean": 170.3
+      },
+      "shipped": {
+        "count": 92,
+        "median": 0.0,
+        "p90": 110.0,
+        "mean": 24.2
+      }
+    },
+    {
+      "date": "2025-06-20",
+      "waiting": {
+        "count": 89,
+        "median": 193.3,
+        "p90": 338.5,
+        "mean": 168.7
+      },
+      "shipped": {
+        "count": 80,
+        "median": 0.0,
+        "p90": 88.0,
+        "mean": 20.6
+      }
+    },
+    {
+      "date": "2025-06-27",
+      "waiting": {
+        "count": 89,
+        "median": 165.4,
+        "p90": 345.5,
+        "mean": 160.5
+      },
+      "shipped": {
+        "count": 85,
+        "median": 0.0,
+        "p90": 169.0,
+        "mean": 35.0
+      }
+    },
+    {
+      "date": "2025-07-04",
+      "waiting": {
+        "count": 87,
+        "median": 179.4,
+        "p90": 352.5,
+        "mean": 169.6
+      },
+      "shipped": {
+        "count": 81,
+        "median": 0.0,
+        "p90": 154.0,
+        "mean": 30.3
+      }
+    },
+    {
+      "date": "2025-07-11",
+      "waiting": {
+        "count": 83,
+        "median": 187.0,
+        "p90": 359.5,
+        "mean": 183.0
+      },
+      "shipped": {
+        "count": 64,
+        "median": 0.0,
+        "p90": 154.0,
+        "mean": 32.3
+      }
+    },
+    {
+      "date": "2025-07-18",
+      "waiting": {
+        "count": 79,
+        "median": 225.6,
+        "p90": 402.9,
+        "mean": 196.6
+      },
+      "shipped": {
+        "count": 72,
+        "median": 0.0,
+        "p90": 71.0,
+        "mean": 26.3
+      }
+    },
+    {
+      "date": "2025-07-25",
+      "waiting": {
+        "count": 79,
+        "median": 228.3,
+        "p90": 409.9,
+        "mean": 197.5
+      },
+      "shipped": {
+        "count": 67,
+        "median": 0.0,
+        "p90": 40.0,
+        "mean": 15.5
+      }
+    },
+    {
+      "date": "2025-08-01",
+      "waiting": {
+        "count": 76,
+        "median": 240.4,
+        "p90": 416.9,
+        "mean": 211.0
+      },
+      "shipped": {
+        "count": 62,
+        "median": 0.0,
+        "p90": 29.0,
+        "mean": 16.1
+      }
+    },
+    {
+      "date": "2025-08-08",
+      "waiting": {
+        "count": 74,
+        "median": 248.7,
+        "p90": 423.9,
+        "mean": 223.2
+      },
+      "shipped": {
+        "count": 64,
+        "median": 0.0,
+        "p90": 21.0,
+        "mean": 13.7
+      }
+    },
+    {
+      "date": "2025-08-15",
+      "waiting": {
+        "count": 77,
+        "median": 253.6,
+        "p90": 430.9,
+        "mean": 221.2
+      },
+      "shipped": {
+        "count": 50,
+        "median": 0.0,
+        "p90": 18.0,
+        "mean": 12.8
+      }
+    },
+    {
+      "date": "2025-08-22",
+      "waiting": {
+        "count": 79,
+        "median": 256.3,
+        "p90": 437.9,
+        "mean": 222.5
+      },
+      "shipped": {
+        "count": 35,
+        "median": 0.0,
+        "p90": 10.0,
+        "mean": 4.5
+      }
+    },
+    {
+      "date": "2025-08-29",
+      "waiting": {
+        "count": 84,
+        "median": 231.9,
+        "p90": 408.5,
+        "mean": 211.8
+      },
+      "shipped": {
+        "count": 34,
+        "median": 0.0,
+        "p90": 14.0,
+        "mean": 11.7
+      }
+    },
+    {
+      "date": "2025-09-05",
+      "waiting": {
+        "count": 74,
+        "median": 275.4,
+        "p90": 451.9,
+        "mean": 246.6
+      },
+      "shipped": {
+        "count": 43,
+        "median": 0.0,
+        "p90": 11.0,
+        "mean": 10.2
+      }
+    },
+    {
+      "date": "2025-09-12",
+      "waiting": {
+        "count": 71,
+        "median": 283.2,
+        "p90": 458.9,
+        "mean": 252.7
+      },
+      "shipped": {
+        "count": 53,
+        "median": 0.0,
+        "p90": 88.0,
+        "mean": 23.6
+      }
+    },
+    {
+      "date": "2025-09-19",
+      "waiting": {
+        "count": 70,
+        "median": 290.8,
+        "p90": 465.9,
+        "mean": 263.3
+      },
+      "shipped": {
+        "count": 57,
+        "median": 0.0,
+        "p90": 88.0,
+        "mean": 22.1
+      }
+    },
+    {
+      "date": "2025-09-26",
+      "waiting": {
+        "count": 64,
+        "median": 277.6,
+        "p90": 494.6,
+        "mean": 260.2
+      },
+      "shipped": {
+        "count": 56,
+        "median": 0.5,
+        "p90": 310.0,
+        "mean": 56.4
+      }
+    },
+    {
+      "date": "2025-10-03",
+      "waiting": {
+        "count": 67,
+        "median": 270.4,
+        "p90": 501.6,
+        "mean": 253.1
+      },
+      "shipped": {
+        "count": 39,
+        "median": 0.0,
+        "p90": 337.0,
+        "mean": 82.9
+      }
+    },
+    {
+      "date": "2025-10-10",
+      "waiting": {
+        "count": 65,
+        "median": 278.0,
+        "p90": 508.6,
+        "mean": 267.6
+      },
+      "shipped": {
+        "count": 30,
+        "median": 0.0,
+        "p90": 337.0,
+        "mean": 81.1
+      }
+    },
+    {
+      "date": "2025-10-17",
+      "waiting": {
+        "count": 62,
+        "median": 314.5,
+        "p90": 515.6,
+        "mean": 284.3
+      },
+      "shipped": {
+        "count": 39,
+        "median": 0.0,
+        "p90": 337.0,
+        "mean": 67.7
+      }
+    },
+    {
+      "date": "2025-10-24",
+      "waiting": {
+        "count": 67,
+        "median": 291.4,
+        "p90": 522.6,
+        "mean": 269.9
+      },
+      "shipped": {
+        "count": 32,
+        "median": 0.0,
+        "p90": 37.0,
+        "mean": 12.2
+      }
+    },
+    {
+      "date": "2025-10-31",
+      "waiting": {
+        "count": 63,
+        "median": 326.3,
+        "p90": 529.6,
+        "mean": 293.7
+      },
+      "shipped": {
+        "count": 38,
+        "median": 0.0,
+        "p90": 34.0,
+        "mean": 7.3
+      }
+    },
+    {
+      "date": "2025-11-07",
+      "waiting": {
+        "count": 62,
+        "median": 335.5,
+        "p90": 536.6,
+        "mean": 304.9
+      },
+      "shipped": {
+        "count": 48,
+        "median": 0.0,
+        "p90": 21.0,
+        "mean": 6.2
+      }
+    },
+    {
+      "date": "2025-11-14",
+      "waiting": {
+        "count": 63,
+        "median": 340.3,
+        "p90": 543.6,
+        "mean": 307.1
+      },
+      "shipped": {
+        "count": 36,
+        "median": 0.0,
+        "p90": 11.0,
+        "mean": 2.4
+      }
+    },
+    {
+      "date": "2025-11-21",
+      "waiting": {
+        "count": 64,
+        "median": 333.6,
+        "p90": 550.6,
+        "mean": 309.2
+      },
+      "shipped": {
+        "count": 44,
+        "median": 0.0,
+        "p90": 11.0,
+        "mean": 2.0
+      }
+    },
+    {
+      "date": "2025-11-28",
+      "waiting": {
+        "count": 64,
+        "median": 340.6,
+        "p90": 557.6,
+        "mean": 315.8
+      },
+      "shipped": {
+        "count": 41,
+        "median": 0.0,
+        "p90": 2.0,
+        "mean": 1.6
+      }
+    },
+    {
+      "date": "2025-12-05",
+      "waiting": {
+        "count": 65,
+        "median": 334.0,
+        "p90": 564.6,
+        "mean": 317.9
+      },
+      "shipped": {
+        "count": 23,
+        "median": 0.0,
+        "p90": 1.0,
+        "mean": 1.1
+      }
+    },
+    {
+      "date": "2025-12-12",
+      "waiting": {
+        "count": 67,
+        "median": 340.4,
+        "p90": 571.6,
+        "mean": 315.3
+      },
+      "shipped": {
+        "count": 25,
+        "median": 0.0,
+        "p90": 1.0,
+        "mean": 1.0
+      }
+    },
+    {
+      "date": "2025-12-19",
+      "waiting": {
+        "count": 67,
+        "median": 347.4,
+        "p90": 578.6,
+        "mean": 322.3
+      },
+      "shipped": {
+        "count": 21,
+        "median": 0.0,
+        "p90": 1.0,
+        "mean": 1.1
+      }
+    },
+    {
+      "date": "2025-12-26",
+      "waiting": {
+        "count": 67,
+        "median": 347.4,
+        "p90": 585.6,
+        "mean": 318.4
+      },
+      "shipped": {
+        "count": 20,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 36.4
+      }
+    },
+    {
+      "date": "2026-01-02",
+      "waiting": {
+        "count": 67,
+        "median": 354.4,
+        "p90": 592.6,
+        "mean": 325.4
+      },
+      "shipped": {
+        "count": 18,
+        "median": 0.0,
+        "p90": 350.0,
+        "mean": 40.4
+      }
+    },
+    {
+      "date": "2026-01-09",
+      "waiting": {
+        "count": 74,
+        "median": 305.3,
+        "p90": 577.9,
+        "mean": 299.8
+      },
+      "shipped": {
+        "count": 23,
+        "median": 0.0,
+        "p90": 57.0,
+        "mean": 36.1
+      }
+    },
+    {
+      "date": "2026-01-16",
+      "waiting": {
+        "count": 68,
+        "median": 364.9,
+        "p90": 606.6,
+        "mean": 332.9
+      },
+      "shipped": {
+        "count": 40,
+        "median": 0.0,
+        "p90": 11.0,
+        "mean": 21.9
+      }
+    },
+    {
+      "date": "2026-01-23",
+      "waiting": {
+        "count": 64,
+        "median": 382.7,
+        "p90": 613.6,
+        "mean": 355.3
+      },
+      "shipped": {
+        "count": 51,
+        "median": 0.0,
+        "p90": 29.0,
+        "mean": 10.2
+      }
+    },
+    {
+      "date": "2026-01-30",
+      "waiting": {
+        "count": 64,
+        "median": 389.7,
+        "p90": 620.6,
+        "mean": 362.3
+      },
+      "shipped": {
+        "count": 59,
+        "median": 0.0,
+        "p90": 29.0,
+        "mean": 8.8
+      }
+    },
+    {
+      "date": "2026-02-06",
+      "waiting": {
+        "count": 64,
+        "median": 396.7,
+        "p90": 627.6,
+        "mean": 369.3
+      },
+      "shipped": {
+        "count": 56,
+        "median": 0.0,
+        "p90": 9.0,
+        "mean": 7.5
+      }
+    },
+    {
+      "date": "2026-02-13",
+      "waiting": {
+        "count": 63,
+        "median": 404.0,
+        "p90": 634.6,
+        "mean": 376.1
+      },
+      "shipped": {
+        "count": 37,
+        "median": 0.0,
+        "p90": 29.0,
+        "mean": 20.5
+      }
+    },
+    {
+      "date": "2026-02-20",
+      "waiting": {
+        "count": 64,
+        "median": 410.7,
+        "p90": 641.6,
+        "mean": 377.2
+      },
+      "shipped": {
+        "count": 32,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 12.1
+      }
+    },
+    {
+      "date": "2026-02-27",
+      "waiting": {
+        "count": 66,
+        "median": 413.9,
+        "p90": 648.6,
+        "mean": 372.6
+      },
+      "shipped": {
+        "count": 33,
+        "median": 0.0,
+        "p90": 0.0,
+        "mean": 11.8
+      }
+    },
+    {
+      "date": "2026-03-06",
+      "waiting": {
+        "count": 60,
+        "median": 457.4,
+        "p90": 655.6,
+        "mean": 405.4
+      },
+      "shipped": {
+        "count": 42,
+        "median": 0.0,
+        "p90": 83.0,
+        "mean": 26.3
+      }
+    },
+    {
+      "date": "2026-03-13",
+      "waiting": {
+        "count": 62,
+        "median": 447.8,
+        "p90": 662.6,
+        "mean": 396.4
+      },
+      "shipped": {
+        "count": 42,
+        "median": 0.0,
+        "p90": 83.0,
+        "mean": 21.1
+      }
+    },
+    {
+      "date": "2026-03-20",
+      "waiting": {
+        "count": 67,
+        "median": 431.4,
+        "p90": 669.6,
+        "mean": 373.4
+      },
+      "shipped": {
+        "count": 48,
+        "median": 0.0,
+        "p90": 83.0,
+        "mean": 18.4
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "waiting": {
+        "count": 63,
+        "median": 446.0,
+        "p90": 676.6,
+        "mean": 400.1
+      },
+      "shipped": {
+        "count": 51,
+        "median": 0.0,
+        "p90": 86.0,
+        "mean": 22.7
+      }
+    },
+    {
+      "date": "2026-04-03",
+      "waiting": {
+        "count": 65,
+        "median": 452.4,
+        "p90": 683.6,
+        "mean": 394.7
+      },
+      "shipped": {
+        "count": 36,
+        "median": 0.0,
+        "p90": 37.0,
+        "mean": 12.2
+      }
+    },
+    {
+      "date": "2026-04-10",
+      "waiting": {
+        "count": 66,
+        "median": 455.9,
+        "p90": 690.6,
+        "mean": 395.4
+      },
+      "shipped": {
+        "count": 38,
+        "median": 0.0,
+        "p90": 9.0,
+        "mean": 7.5
+      }
+    },
+    {
+      "date": "2026-04-17",
+      "waiting": {
+        "count": 63,
+        "median": 459.4,
+        "p90": 697.6,
+        "mean": 404.0
+      },
+      "shipped": {
+        "count": 32,
+        "median": 0.0,
+        "p90": 112.0,
+        "mean": 43.1
+      }
+    },
+    {
+      "date": "2026-04-24",
+      "waiting": {
+        "count": 63,
+        "median": 466.4,
+        "p90": 704.6,
+        "mean": 411.0
+      },
+      "shipped": {
+        "count": 31,
+        "median": 0.0,
+        "p90": 3.0,
+        "mean": 35.7
+      }
+    },
+    {
+      "date": "2026-05-01",
+      "waiting": {
+        "count": 64,
+        "median": 464.7,
+        "p90": 711.6,
+        "mean": 409.8
+      },
+      "shipped": {
+        "count": 42,
+        "median": 0.0,
+        "p90": 3.0,
+        "mean": 28.8
+      }
+    },
+    {
+      "date": "2026-05-08",
+      "waiting": {
+        "count": 47,
+        "median": 415.6,
+        "p90": 723.9,
+        "mean": 380.3
+      },
+      "shipped": {
+        "count": 53,
+        "median": 0.0,
+        "p90": 605.0,
+        "mean": 187.9
+      }
+    },
+    {
+      "date": "2026-05-15",
+      "waiting": {
+        "count": 46,
+        "median": 422.6,
+        "p90": 730.9,
+        "mean": 393.5
+      },
+      "shipped": {
+        "count": 52,
+        "median": 0.0,
+        "p90": 605.0,
+        "mean": 172.3
+      }
+    },
+    {
+      "date": "2026-05-22",
+      "waiting": {
+        "count": 47,
+        "median": 429.6,
+        "p90": 737.9,
+        "mean": 392.0
+      },
+      "shipped": {
+        "count": 55,
+        "median": 0.0,
+        "p90": 605.0,
+        "mean": 162.9
+      }
+    },
+    {
+      "date": "2026-05-29",
+      "waiting": {
+        "count": 48,
+        "median": 407.7,
+        "p90": 744.9,
+        "mean": 390.6
+      },
+      "shipped": {
+        "count": 50,
+        "median": 0.0,
+        "p90": 605.0,
+        "mean": 177.2
+      }
+    },
+    {
+      "date": "2026-06-05",
+      "waiting": {
+        "count": 49,
+        "median": 385.7,
+        "p90": 751.9,
+        "mean": 389.6
+      },
+      "shipped": {
+        "count": 35,
+        "median": 0.0,
+        "p90": 3.0,
+        "mean": 2.9
+      }
+    },
+    {
+      "date": "2026-06-12",
+      "waiting": {
+        "count": 51,
+        "median": 364.7,
+        "p90": 758.9,
+        "mean": 378.4
+      },
+      "shipped": {
+        "count": 36,
+        "median": 0.0,
+        "p90": 3.0,
+        "mean": 3.6
+      }
+    },
+    {
+      "date": "2026-06-19",
+      "waiting": {
+        "count": 53,
+        "median": 371.7,
+        "p90": 765.9,
+        "mean": 370.9
+      },
+      "shipped": {
+        "count": 45,
+        "median": 0.0,
+        "p90": 3.0,
+        "mean": 3.1
+      }
+    },
+    {
+      "date": "2026-06-26",
+      "waiting": {
+        "count": 58,
+        "median": 375.7,
+        "p90": 772.9,
+        "mean": 345.0
+      },
+      "shipped": {
+        "count": 52,
+        "median": 0.0,
+        "p90": 4.0,
+        "mean": 3.2
+      }
+    },
+    {
+      "date": "2026-07-03",
+      "waiting": {
+        "count": 59,
+        "median": 382.7,
+        "p90": 779.9,
+        "mean": 346.0
+      },
+      "shipped": {
+        "count": 50,
+        "median": 0.0,
+        "p90": 4.0,
+        "mean": 3.3
+      }
+    },
+    {
+      "date": "2026-07-10",
+      "waiting": {
+        "count": 58,
+        "median": 389.7,
+        "p90": 786.9,
+        "mean": 357.7
+      },
+      "shipped": {
+        "count": 46,
+        "median": 0.0,
+        "p90": 5.0,
+        "mean": 2.6
+      }
+    },
+    {
+      "date": "2026-07-17",
+      "waiting": {
+        "count": 58,
+        "median": 396.7,
+        "p90": 793.9,
+        "mean": 364.7
+      },
+      "shipped": {
+        "count": 26,
+        "median": 0.0,
+        "p90": 24.0,
+        "mean": 4.2
+      }
+    },
+    {
+      "date": "2026-07-24",
+      "waiting": {
+        "count": 69,
+        "median": 316.9,
+        "p90": 795.6,
+        "mean": 312.7
+      },
+      "shipped": {
+        "count": 21,
+        "median": 1.0,
+        "p90": 24.0,
+        "mean": 4.6
+      }
+    },
+    {
+      "date": "2026-07-31",
+      "waiting": {
+        "count": 77,
+        "median": 143.4,
+        "p90": 780.9,
+        "mean": 286.2
+      },
+      "shipped": {
+        "count": 28,
+        "median": 1.5,
+        "p90": 24.0,
+        "mean": 4.7
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "waiting": {
+        "count": 99,
+        "median": 45.2,
+        "p90": 662.3,
+        "mean": 228.5
+      },
+      "shipped": {
+        "count": 24,
+        "median": 1.0,
+        "p90": 7.0,
+        "mean": 2.3
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "waiting": {
+        "count": 78,
+        "median": 156.8,
+        "p90": 794.9,
+        "mean": 295.2
+      },
+      "shipped": {
+        "count": 71,
+        "median": 2.0,
+        "p90": 13.0,
+        "mean": 4.5
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "waiting": {
+        "count": 83,
+        "median": 156.6,
+        "p90": 677.2,
+        "mean": 279.2
+      },
+      "shipped": {
+        "count": 76,
+        "median": 3.0,
+        "p90": 21.0,
+        "mean": 9.1
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "waiting": {
+        "count": 95,
+        "median": 36.2,
+        "p90": 646.7,
+        "mean": 228.1
+      },
+      "shipped": {
+        "count": 79,
+        "median": 3.0,
+        "p90": 56.0,
+        "mean": 34.9
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "waiting": {
+        "count": 79,
+        "median": 28.1,
+        "p90": 448.7,
+        "mean": 119.7
+      },
+      "shipped": {
+        "count": 105,
+        "median": 8.0,
+        "p90": 679.0,
+        "mean": 148.4
+      }
+    },
+    {
+      "date": "2026-09-11",
+      "waiting": {
+        "count": 87,
+        "median": 23.1,
+        "p90": 452.7,
+        "mean": 114.5
+      },
+      "shipped": {
+        "count": 58,
+        "median": 55.0,
+        "p90": 840.0,
+        "mean": 265.3
+      }
+    },
+    {
+      "date": "2026-09-18",
+      "waiting": {
+        "count": 223,
+        "median": 1.0,
+        "p90": 87.4,
+        "mean": 45.1
+      },
+      "shipped": {
+        "count": 78,
+        "median": 18.5,
+        "p90": 813.0,
+        "mean": 199.9
+      }
+    },
+    {
+      "date": "2026-09-25",
+      "waiting": {
+        "count": 230,
+        "median": 8.0,
+        "p90": 94.2,
+        "mean": 50.5
+      },
+      "shipped": {
+        "count": 68,
+        "median": 18.0,
+        "p90": 834.0,
+        "mean": 198.6
+      }
+    },
+    {
+      "date": "2026-10-02",
+      "waiting": {
+        "count": 209,
+        "median": 14.9,
+        "p90": 101.0,
+        "mean": 54.3
+      },
+      "shipped": {
+        "count": 99,
+        "median": 8.0,
+        "p90": 27.0,
+        "mean": 25.6
+      }
+    },
+    {
+      "date": "2026-10-09",
+      "waiting": {
+        "count": 199,
+        "median": 21.9,
+        "p90": 108.2,
+        "mean": 62.7
+      },
+      "shipped": {
+        "count": 116,
+        "median": 11.5,
+        "p90": 26.0,
+        "mean": 23.8
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "waiting": {
+        "count": 260,
+        "median": 28.9,
+        "p90": 73.2,
+        "mean": 52.8
+      },
+      "shipped": {
+        "count": 110,
+        "median": 7.0,
+        "p90": 26.0,
+        "mean": 23.0
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "waiting": {
+        "count": 271,
+        "median": 35.7,
+        "p90": 80.2,
+        "mean": 57.2
+      },
+      "shipped": {
+        "count": 113,
+        "median": 7.0,
+        "p90": 27.0,
+        "mean": 23.0
+      }
+    },
+    {
+      "date": "2026-10-30",
+      "waiting": {
+        "count": 209,
+        "median": 42.9,
+        "p90": 92.1,
+        "mean": 68.6
+      },
+      "shipped": {
+        "count": 143,
+        "median": 16.0,
+        "p90": 40.0,
+        "mean": 25.2
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "waiting": {
+        "count": 184,
+        "median": 49.7,
+        "p90": 99.1,
+        "mean": 78.2
+      },
+      "shipped": {
+        "count": 171,
+        "median": 16.0,
+        "p90": 49.0,
+        "mean": 27.3
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "waiting": {
+        "count": 160,
+        "median": 56.7,
+        "p90": 106.1,
+        "mean": 84.6
+      },
+      "shipped": {
+        "count": 194,
+        "median": 22.0,
+        "p90": 56.0,
+        "mean": 33.0
+      }
+    },
+    {
+      "date": "2026-11-20",
+      "waiting": {
+        "count": 38,
+        "median": 63.4,
+        "p90": 525.7,
+        "mean": 131.5
+      },
+      "shipped": {
+        "count": 352,
+        "median": 35.0,
+        "p90": 76.0,
+        "mean": 44.2
+      }
+    }
+  ]
+}
