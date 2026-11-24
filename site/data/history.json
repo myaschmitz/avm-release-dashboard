@@ -872,11 +872,11 @@
   {
     "date": "2026-11-24",
     "repoCount": 184,
-    "unreleasedWork": 24,
+    "unreleasedWork": 23,
     "aged": 3,
-    "neverReleased": 37,
-    "nothingToRelease": 123,
-    "unreleasedPrs": 44,
+    "neverReleased": 35,
+    "nothingToRelease": 126,
+    "unreleasedPrs": 43,
     "awaitingIssues": 5
   }
 ]
