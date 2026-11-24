@@ -332,6 +332,14 @@ td.aged { color: var(--amber); font-weight: 600; }
 .tip-label { color: var(--muted); }
 .tip-value { margin-left: auto; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 
+/* release wait charts */
+.chart-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 12px; }
+.chart-cell { min-width: 0; }
+.chart-cell h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+.chart-cell .fine { margin-bottom: 4px; }
+.chart-summary { margin: 0 0 4px; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) { .chart-pair { grid-template-columns: 1fr; } }
+
 /* expandable rows */
 tr.expandable { cursor: pointer; }
 tr.expandable:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }

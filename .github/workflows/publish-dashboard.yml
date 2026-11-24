@@ -57,6 +57,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh api rate_limit --jq '.resources.core | "core limit=\(.limit) remaining=\(.remaining)"'
 
+      # Rebuilt from git history on every run, so it is never committed. Clones cost
+      # no REST quota. One releases call per module reads publication dates.
+      - name: Measure release wait times
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pwsh -File scripts/Get-AvmReleaseWait.ps1
+
       # The snapshot is rebuilt every run and stays uncommitted. History cannot be
       # rebuilt, because the API only reports the present, so it is committed.
       - name: Record today in the history

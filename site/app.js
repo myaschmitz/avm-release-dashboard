@@ -50,6 +50,7 @@ const SERIES = [
 
 let MODULES = [];
 let HISTORY = [];
+let WAIT = null;
 const EXPANDED = new Set();
 let sortKey = 'state';
 let sortAsc = true;
@@ -140,10 +141,165 @@ function svg(tag, attrs) {
 // A viewBox lets the chart scale with the panel without recomputing on resize.
 const CHART = { w: 900, h: 220, left: 40, right: 16, top: 16, bottom: 28 };
 
+// Gridline labels stay whole numbers at the top and the midpoint.
+function niceCeiling(max) {
+  const unit = max > 200 ? 100 : max > 50 ? 20 : max > 20 ? 10 : 5;
+  return Math.max(5, Math.ceil(max / unit) * unit);
+}
+
+const isNumber = v => typeof v === 'number' && !isNaN(v);
+
+/*
+  Draws dated rows as one line per series, with a hover band per row.
+
+  Each series supplies `value(row)`, and a null value leaves a gap rather than
+  drawing a fake zero. `tip(row)` returns the tooltip lines for one row, so a chart
+  can show figures it does not plot, such as the mean beside a median line.
+*/
+function lineChart(host, rows, series, options) {
+  const C = Object.assign({}, CHART, options.size || {});
+  host.textContent = '';
+
+  const plotW = C.w - C.left - C.right;
+  const plotH = C.h - C.top - C.bottom;
+
+  const values = rows.flatMap(row => series.map(s => s.value(row))).filter(isNumber);
+  const peak = niceCeiling(values.length ? Math.max(...values) : 0);
+
+  const x = i => C.left + (rows.length === 1 ? plotW / 2 : (i / (rows.length - 1)) * plotW);
+  const y = v => C.top + plotH - (v / peak) * plotH;
+
+  const chart = svg('svg', { viewBox: `0 0 ${C.w} ${C.h}`, class: 'chart', role: 'img', 'aria-label': options.ariaLabel });
+
+  [0, 0.5, 1].forEach(fraction => {
+    const value = Math.round(peak * fraction);
+    const yy = y(value);
+    chart.appendChild(svg('line', { x1: C.left, y1: yy, x2: C.w - C.right, y2: yy, class: 'grid' }));
+    const label = svg('text', { x: C.left - 8, y: yy + 4, class: 'axis', 'text-anchor': 'end' });
+    label.textContent = String(value);
+    chart.appendChild(label);
+  });
+
+  // Drawn before the dots so it sits behind them.
+  const guide = svg('line', { y1: C.top, y2: C.top + plotH, class: 'guide', opacity: 0 });
+  chart.appendChild(guide);
+
+  const dotsByColumn = rows.map(() => []);
+  // A dense series hides its dots until hover, because overlapping dots read as a
+  // dashed line.
+  const dotRadius = options.dotRadius ?? 3;
+  const hoverRadius = dotRadius ? dotRadius + 2 : 4;
+
+  series.forEach(s => {
+    // Split at missing values so a gap shows as a gap.
+    let run = [];
+    const flush = () => {
+      if (run.length > 1) chart.appendChild(svg('polyline', { points: run.join(' '), class: 'line', stroke: s.color }));
+      run = [];
+    };
+    rows.forEach((row, i) => {
+      const v = s.value(row);
+      if (!isNumber(v)) { flush(); return; }
+      run.push(`${x(i)},${y(v)}`);
+    });
+    flush();
+
+    rows.forEach((row, i) => {
+      const v = s.value(row);
+      if (!isNumber(v)) return;
+      const dot = svg('circle', { cx: x(i), cy: y(v), r: dotRadius, class: 'dot', fill: s.color });
+      chart.appendChild(dot);
+      dotsByColumn[i].push(dot);
+    });
+  });
+
+  const first = svg('text', { x: C.left, y: C.h - 8, class: 'axis' });
+  first.textContent = rows[0].date;
+  chart.appendChild(first);
+
+  if (rows.length > 1) {
+    const last = svg('text', { x: C.w - C.right, y: C.h - 8, class: 'axis', 'text-anchor': 'end' });
+    last.textContent = rows[rows.length - 1].date;
+    chart.appendChild(last);
+  }
+
+  // A tick at the first row of each new year, so a multi-year series shows where
+  // each year starts. Ticks too close to an end label are skipped.
+  if (options.yearTicks) {
+    rows.forEach((row, i) => {
+      if (i === 0 || row.date.slice(0, 4) === rows[i - 1].date.slice(0, 4)) return;
+      const xx = x(i);
+      if (xx - C.left < 90 || C.w - C.right - xx < 90) return;
+      chart.appendChild(svg('line', { x1: xx, y1: C.top + plotH, x2: xx, y2: C.top + plotH + 4, class: 'grid' }));
+      const label = svg('text', { x: xx, y: C.h - 8, class: 'axis', 'text-anchor': 'middle' });
+      label.textContent = row.date.slice(0, 4);
+      chart.appendChild(label);
+    });
+  }
+
+  host.appendChild(chart);
+
+  // One transparent band per row, full plot height. A dot is far too small to aim
+  // at, and hovering the band shows every figure for that date at once.
+  const tooltip = el('div', 'chart-tip');
+  tooltip.hidden = true;
+  host.appendChild(tooltip);
+
+  const span = rows.length > 1 ? plotW / (rows.length - 1) : plotW;
+
+  const clearHover = () => {
+    tooltip.hidden = true;
+    guide.setAttribute('opacity', '0');
+    dotsByColumn.flat().forEach(dot => dot.setAttribute('r', String(dotRadius)));
+  };
+
+  rows.forEach((row, i) => {
+    const band = svg('rect', {
+      x: Math.max(0, x(i) - span / 2),
+      y: C.top,
+      width: rows.length > 1 ? span : plotW,
+      height: plotH,
+      class: 'band'
+    });
+
+    band.addEventListener('mouseenter', () => {
+      guide.setAttribute('x1', String(x(i)));
+      guide.setAttribute('x2', String(x(i)));
+      guide.setAttribute('opacity', '1');
+
+      dotsByColumn.flat().forEach(dot => dot.setAttribute('r', String(dotRadius)));
+      dotsByColumn[i].forEach(dot => dot.setAttribute('r', String(hoverRadius)));
+
+      tooltip.textContent = '';
+      tooltip.appendChild(el('div', 'tip-date', row.date));
+      options.tip(row).forEach(item => {
+        const line = el('div', 'tip-row');
+        const swatch = el('span', 'swatch');
+        if (item.color) { swatch.style.background = item.color; } else { swatch.style.visibility = 'hidden'; }
+        line.appendChild(swatch);
+        line.appendChild(el('span', 'tip-label', item.label));
+        line.appendChild(el('span', 'tip-value', item.value));
+        tooltip.appendChild(line);
+      });
+
+      // The chart scales to the panel, so the anchor is a percentage of the
+      // viewBox rather than a pixel offset.
+      tooltip.style.left = (x(i) / C.w * 100) + '%';
+      // Flip the tooltip to the left of the guide once the point is past the middle,
+      // so it cannot overflow the panel on the right.
+      tooltip.classList.toggle('flip', x(i) > C.w * 0.6);
+      tooltip.hidden = false;
+    });
+
+    chart.appendChild(band);
+  });
+
+  chart.addEventListener('mouseleave', clearHover);
+  clearHover();
+}
+
 function renderTrend() {
   const panel = document.getElementById('trendPanel');
-  const host = document.getElementById('trend');
-  host.textContent = '';
 
   if (HISTORY.length === 0) {
     panel.hidden = true;
@@ -158,121 +314,16 @@ function renderTrend() {
     note.textContent = HISTORY.length + ' days recorded, ' + HISTORY[0].date + ' to ' + HISTORY[HISTORY.length - 1].date + '.';
   }
 
-  const plotW = CHART.w - CHART.left - CHART.right;
-  const plotH = CHART.h - CHART.top - CHART.bottom;
-
-  const values = HISTORY.flatMap(row => SERIES.map(s => row[s.key] || 0));
-  // Round the ceiling up to a multiple of five so the gridline labels stay whole.
-  const peak = Math.max(5, Math.ceil(Math.max(...values) / 5) * 5);
-
-  const x = i => CHART.left + (HISTORY.length === 1 ? plotW / 2 : (i / (HISTORY.length - 1)) * plotW);
-  const y = v => CHART.top + plotH - (v / peak) * plotH;
-
-  const chart = svg('svg', {
-    viewBox: `0 0 ${CHART.w} ${CHART.h}`,
-    class: 'chart',
-    role: 'img',
-    'aria-label': 'Counts over time. Latest: ' +
-      SERIES.map(s => s.label + ' ' + (HISTORY[HISTORY.length - 1][s.key] || 0)).join(', ') + '.'
-  });
-
-  [0, 0.5, 1].forEach(fraction => {
-    const value = Math.round(peak * fraction);
-    const yy = y(value);
-    chart.appendChild(svg('line', { x1: CHART.left, y1: yy, x2: CHART.w - CHART.right, y2: yy, class: 'grid' }));
-    const label = svg('text', { x: CHART.left - 8, y: yy + 4, class: 'axis', 'text-anchor': 'end' });
-    label.textContent = String(value);
-    chart.appendChild(label);
-  });
-
-  // Drawn before the dots so it sits behind them.
-  const guide = svg('line', { y1: CHART.top, y2: CHART.top + plotH, class: 'guide', opacity: 0 });
-  chart.appendChild(guide);
-
-  const dotsByColumn = HISTORY.map(() => []);
-
-  SERIES.forEach(series => {
-    if (HISTORY.length > 1) {
-      const points = HISTORY.map((row, i) => `${x(i)},${y(row[series.key] || 0)}`).join(' ');
-      chart.appendChild(svg('polyline', { points, class: 'line', stroke: series.color }));
+  const latest = HISTORY[HISTORY.length - 1];
+  lineChart(
+    document.getElementById('trend'),
+    HISTORY,
+    SERIES.map(s => ({ color: s.color, value: row => row[s.key] || 0 })),
+    {
+      ariaLabel: 'Counts over time. Latest: ' + SERIES.map(s => s.label + ' ' + (latest[s.key] || 0)).join(', ') + '.',
+      tip: row => SERIES.map(s => ({ color: s.color, label: s.label, value: String(row[s.key] ?? 0) }))
     }
-    HISTORY.forEach((row, i) => {
-      const dot = svg('circle', { cx: x(i), cy: y(row[series.key] || 0), r: 3, class: 'dot', fill: series.color });
-      chart.appendChild(dot);
-      dotsByColumn[i].push(dot);
-    });
-  });
-
-  const first = svg('text', { x: CHART.left, y: CHART.h - 8, class: 'axis' });
-  first.textContent = HISTORY[0].date;
-  chart.appendChild(first);
-
-  if (HISTORY.length > 1) {
-    const last = svg('text', { x: CHART.w - CHART.right, y: CHART.h - 8, class: 'axis', 'text-anchor': 'end' });
-    last.textContent = HISTORY[HISTORY.length - 1].date;
-    chart.appendChild(last);
-  }
-
-  host.appendChild(chart);
-
-  // One transparent band per day, full plot height. A 3px dot is far too small to
-  // aim at, and hovering the band shows every series for that date at once rather
-  // than one value at a time.
-  const tooltip = el('div', 'chart-tip');
-  tooltip.hidden = true;
-  host.appendChild(tooltip);
-
-  const span = HISTORY.length > 1 ? plotW / (HISTORY.length - 1) : plotW;
-
-  const clearHover = () => {
-    tooltip.hidden = true;
-    guide.setAttribute('opacity', '0');
-    dotsByColumn.flat().forEach(dot => dot.setAttribute('r', '3'));
-  };
-
-  HISTORY.forEach((row, i) => {
-    const band = svg('rect', {
-      x: Math.max(0, x(i) - span / 2),
-      y: CHART.top,
-      width: HISTORY.length > 1 ? span : plotW,
-      height: plotH,
-      class: 'band'
-    });
-
-    band.addEventListener('mouseenter', () => {
-      guide.setAttribute('x1', String(x(i)));
-      guide.setAttribute('x2', String(x(i)));
-      guide.setAttribute('opacity', '1');
-
-      dotsByColumn.flat().forEach(dot => dot.setAttribute('r', '3'));
-      dotsByColumn[i].forEach(dot => dot.setAttribute('r', '5'));
-
-      tooltip.textContent = '';
-      tooltip.appendChild(el('div', 'tip-date', row.date));
-      SERIES.forEach(series => {
-        const line = el('div', 'tip-row');
-        const swatch = el('span', 'swatch');
-        swatch.style.background = series.color;
-        line.appendChild(swatch);
-        line.appendChild(el('span', 'tip-label', series.label));
-        line.appendChild(el('span', 'tip-value', String(row[series.key] ?? 0)));
-        tooltip.appendChild(line);
-      });
-
-      // The chart scales to the panel, so the anchor is a percentage of the
-      // viewBox rather than a pixel offset.
-      tooltip.style.left = (x(i) / CHART.w * 100) + '%';
-      // Flip the tooltip to the left of the guide once the point is past the middle,
-      // so it cannot overflow the panel on the right.
-      tooltip.classList.toggle('flip', x(i) > CHART.w * 0.6);
-      tooltip.hidden = false;
-    });
-
-    chart.appendChild(band);
-  });
-
-  chart.addEventListener('mouseleave', clearHover);
-  clearHover();
+  );
 
   const legend = document.getElementById('trendLegend');
   legend.textContent = '';
@@ -287,6 +338,71 @@ function renderTrend() {
     item.appendChild(text);
     legend.appendChild(item);
   });
+}
+
+/* release wait charts ---------------------------------------------------- */
+
+// Waiting plots the median, because a few abandoned modules hold commits for over
+// a year and would drag a mean line wherever they went. Released plots the 90th
+// percentile, because most releases tag the pull request that asked for them
+// within minutes, which pins the median at zero. Every figure stays in the tooltip.
+const WAIT_CHARTS = [
+  { key: 'waiting', stat: 'median', host: 'waitNow', summary: 'waitNowSummary', color: 'var(--amber)', countLabel: 'Commits waiting' },
+  { key: 'shipped', stat: 'p90', host: 'waitShipped', summary: 'waitShippedSummary', color: 'var(--accent)', countLabel: 'Commits released' }
+];
+
+const STAT_LABEL = { median: 'Median', p90: '90th percentile', mean: 'Mean' };
+
+const formatDays = v => (isNumber(v) ? (Math.round(v * 10) / 10) + (v === 1 ? ' day' : ' days') : '—');
+
+// The newest figure beside the one from a year earlier, so the direction of travel
+// reads without hovering.
+function waitSummary(points, key, stat) {
+  const latest = points[points.length - 1];
+  const yearAgo = Date.parse(latest.date) - 365 * 86400000;
+  const earlier = points.find(p => Date.parse(p.date) >= yearAgo);
+
+  let text = STAT_LABEL[stat] + ' now ' + formatDays(latest[key][stat]);
+  if (earlier && earlier !== latest && isNumber(earlier[key][stat])) {
+    text += ' · ' + formatDays(earlier[key][stat]) + ' on ' + earlier.date;
+  }
+  return text;
+}
+
+function renderWait() {
+  const panel = document.getElementById('waitPanel');
+  const points = (WAIT && WAIT.points) || [];
+  if (points.length === 0) {
+    panel.hidden = true;
+    return;
+  }
+  panel.hidden = false;
+
+  WAIT_CHARTS.forEach(c => {
+    const summary = waitSummary(points, c.key, c.stat);
+    document.getElementById(c.summary).textContent = summary;
+    lineChart(
+      document.getElementById(c.host),
+      points,
+      [{ color: c.color, value: row => row[c.key][c.stat] }],
+      {
+        size: { w: 440, h: 200 },
+        dotRadius: 0,
+        yearTicks: true,
+        ariaLabel: STAT_LABEL[c.stat] + ' days over time. ' + summary + '.',
+        // The plotted figure comes first and carries the swatch.
+        tip: row => [c.stat, ...['median', 'p90', 'mean'].filter(s => s !== c.stat)]
+          .map(s => ({ color: s === c.stat ? c.color : null, label: STAT_LABEL[s], value: formatDays(row[c.key][s]) }))
+          .concat([{ label: c.countLabel, value: String(row[c.key].count) }])
+      }
+    );
+  });
+
+  const failed = WAIT.failedRepos || [];
+  document.getElementById('waitNote').textContent =
+    WAIT.commitCount + ' human commits across ' + WAIT.repoCount + ' modules, sampled every ' + WAIT.stepDays +
+    ' days. Rebuilt from git on ' + (WAIT.generatedAt || 'unknown') + '.' +
+    (failed.length ? ' Could not read: ' + failed.join(', ') + '.' : '');
 }
 
 /* rendering -------------------------------------------------------------- */
@@ -596,19 +712,22 @@ function wire() {
 
 wireTheme();
 
-// History is optional. A repository publishing for the first time has no rows yet,
-// and the page must still render everything else.
+// History and wait times are optional. A repository publishing for the first time
+// has no history rows yet, and the page must still render everything else.
 Promise.all([
   fetch('data/release-status.json').then(r => r.json()),
-  fetch('data/history.json').then(r => (r.ok ? r.json() : [])).catch(() => [])
+  fetch('data/history.json').then(r => (r.ok ? r.json() : [])).catch(() => []),
+  fetch('data/release-wait.json').then(r => (r.ok ? r.json() : null)).catch(() => null)
 ])
-  .then(([doc, history]) => {
+  .then(([doc, history, wait]) => {
     MODULES = doc.modules || [];
     HISTORY = Array.isArray(history) ? history : [];
+    WAIT = wait;
     document.getElementById('stamp').textContent = doc.generatedAt || 'unknown';
     document.getElementById('count').textContent = doc.repoCount ?? MODULES.length;
     renderCards();
     renderTrend();
+    renderWait();
     wire();
     render();
   })

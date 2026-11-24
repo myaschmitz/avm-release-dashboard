@@ -10,11 +10,18 @@ A module can be fixed on `main` and still be unavailable to anyone using the Ter
 
 ## What it shows
 
-Four summary cards, a trend chart, and a table of every module.
+Four summary cards, a trend chart, a pair of wait-time charts, and a table of every module.
 
 Rows for modules with unreleased pull requests or issues awaiting a release expand when clicked, listing each one with a link to GitHub. Pull requests are identified by the `(#123)` suffix that a squash merge writes into the commit subject, because squashing rewrites commit SHAs and a pull request's recorded merge commit often is not the one that reached the default branch.
 
 The chart reads `site/data/history.json`, one row per day.
+
+The wait-time charts read `site/data/release-wait.json`, which `scripts/Get-AvmReleaseWait.ps1` rebuilds from git history on every run. Because commit dates, tags, and release dates are all kept in git and on GitHub, the series reaches back to 2024 and gives a baseline from before any release automation. It samples once a week:
+
+- **Waiting now** plots the median age of human commits that sit on the default branch with no version tag containing them. It drops when a backlog is released.
+- **Time to release** plots the 90th percentile of days from landing to the first tag, for commits released in the four weeks before each point. It drops when new work ships quickly. The median is in the tooltip, but it sits near zero, because most AVM releases tag the pull request that asked for them within minutes.
+
+The script bare-clones each module without file contents, which takes about a minute for 140 modules and costs no REST API quota. It is not committed back, because the next run reproduces it.
 
 ## States
 
@@ -35,7 +42,7 @@ Pages must be enabled once before the first run, because `GITHUB_TOKEN` is not a
 gh api -X POST repos/OWNER/REPO/pages -f build_type=workflow
 ```
 
-The copy of `site/data/release-status.json` in this repository is a fixture for local development only. It goes stale, and the published site never uses it.
+The copies of `site/data/release-status.json` and `site/data/release-wait.json` in this repository are fixtures for local development only. They go stale, and the published site never uses them.
 
 `site/data/history.json` is different. It holds one row per day, and the GitHub API cannot reproduce a past day, so the workflow commits it back after every run. That commit is made with `GITHUB_TOKEN`, which does not start new workflow runs, and the `push` trigger lists only hand-edited paths, so there is no loop.
 
@@ -44,6 +51,7 @@ The copy of `site/data/release-status.json` in this repository is a fixture for 
 ```pwsh
 pwsh -File scripts/Get-AvmReleaseStatus.ps1 -OutputPath site/data/release-status.json
 pwsh -File scripts/Update-AvmReleaseHistory.ps1
+pwsh -File scripts/Get-AvmReleaseWait.ps1
 node site/serve.js
 ```
 
